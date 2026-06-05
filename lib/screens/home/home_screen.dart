@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../data/database/database_helper.dart';
+import '../../data/preferences/preference_helper.dart';
 import '../../models/category_model.dart';
 import '../../models/product_model.dart';
 import '../../widgets/category_chip.dart';
@@ -21,10 +22,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _db = DatabaseHelper.instance;
+  final _prefs = PreferenceHelper.instance;
   
   int? _selectedCategoryId;
   String _sortType = 'Default';
   bool _isGrid = true;
+  String _userName = 'Guest';
 
   List<CategoryModel> _categories = [];
   List<ProductModel> _products = [];
@@ -34,7 +37,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _loadPreferences();
     _loadData();
+  }
+
+  Future<void> _loadPreferences() async {
+    try {
+      final userName = _prefs.getUserName();
+      final lastCategoryId = _prefs.getLastSelectedCategoryId();
+      final sortType = _prefs.getProductSortType();
+      final viewMode = _prefs.getPreferredViewMode();
+
+      setState(() {
+        _userName = userName;
+        _selectedCategoryId = lastCategoryId;
+        _sortType = _mapSortTypeToDisplay(sortType);
+        _isGrid = viewMode == 'grid';
+      });
+    } catch (e) {
+      // Use default values on error
+    }
+  }
+
+  String _mapSortTypeToDisplay(String sortType) {
+    switch (sortType) {
+      case 'price_asc':
+        return 'Harga terendah';
+      case 'price_desc':
+        return 'Harga tertinggi';
+      default:
+        return 'Default';
+    }
   }
 
   Future<void> _loadData() async {
@@ -82,6 +115,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return sorted;
   }
 
+  Future<void> _selectCategory(int? categoryId) async {
+    setState(() => _selectedCategoryId = categoryId);
+    
+    // Save to SharedPreferences
+    try {
+      await _prefs.saveLastSelectedCategoryId(categoryId);
+    } catch (e) {
+      // Silent fail, not critical
+    }
+  }
+
   void _openDetail(ProductModel product) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -115,9 +159,9 @@ class _HomeScreenState extends State<HomeScreen> {
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: AppSpacing.xs),
-        const Text(
-          'Halo, Guest. Jelajahi katalog streetwear lokal.',
-          style: TextStyle(color: AppColors.textSecondary),
+        Text(
+          'Halo, $_userName. Jelajahi katalog streetwear lokal.',
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.lg),
         if (_categories.isNotEmpty)
@@ -133,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return CategoryChip(
                   label: category.name,
                   isSelected: _selectedCategoryId == category.id,
-                  onTap: () => setState(() => _selectedCategoryId = category.id),
+                  onTap: () => _selectCategory(category.id),
                 );
               },
             ),
@@ -171,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actionLabel: _selectedCategoryId == null
                 ? 'Ke Manage Product'
                 : 'Tampilkan Semua',
-            onAction: () => setState(() => _selectedCategoryId = null),
+            onAction: () => _selectCategory(null),
           )
         else if (_isGrid)
           GridView.builder(

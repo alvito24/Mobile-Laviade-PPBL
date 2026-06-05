@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_spacing.dart';
 import '../../data/database/database_helper.dart';
+import '../../data/preferences/preference_helper.dart';
 import '../../models/cart_item_model.dart';
 import '../../widgets/cart_item_tile.dart';
 import '../../widgets/cart_summary.dart';
@@ -21,6 +22,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final _db = DatabaseHelper.instance;
+  final _prefs = PreferenceHelper.instance;
+  
   List<CartItemModel> _cartItems = [];
   bool _loading = true;
   bool _updating = false;
@@ -28,7 +31,16 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
+    _saveCartLastOpened();
     _loadCart();
+  }
+
+  Future<void> _saveCartLastOpened() async {
+    try {
+      await _prefs.saveCartLastOpened();
+    } catch (e) {
+      // Silent fail, not critical
+    }
   }
 
   Future<void> _loadCart() async {

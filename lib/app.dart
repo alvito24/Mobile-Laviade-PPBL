@@ -1,10 +1,40 @@
 import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
-import 'screens/splash/splash_screen.dart';
+import 'data/preferences/preference_helper.dart';
+import 'navigation/main_navigation.dart';
 
-class LaviadeApp extends StatelessWidget {
+class LaviadeApp extends StatefulWidget {
   const LaviadeApp({super.key});
+
+  @override
+  State<LaviadeApp> createState() => _LaviadeAppState();
+}
+
+class _LaviadeAppState extends State<LaviadeApp> {
+  final _prefs = PreferenceHelper.instance;
+  ThemeMode _themeMode = ThemeMode.light;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThemePreference();
+  }
+
+  Future<void> _loadThemePreference() async {
+    try {
+      final isDarkMode = _prefs.getDarkMode();
+      setState(() {
+        _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+      });
+    } catch (e) {
+      // Use default light theme on error
+    }
+  }
+
+  void _updateTheme() {
+    _loadThemePreference();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +43,8 @@ class LaviadeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
-      home: const SplashScreen(),
+      themeMode: _themeMode,
+      home: MainNavigation(onThemeChanged: _updateTheme),
     );
   }
 }

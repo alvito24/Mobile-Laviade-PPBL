@@ -8,7 +8,9 @@ import '../screens/settings/settings_screen.dart';
 import '../widgets/app_bottom_nav.dart';
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+  const MainNavigation({super.key, this.onThemeChanged});
+
+  final VoidCallback? onThemeChanged;
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -27,7 +29,7 @@ class _MainNavigationState extends State<MainNavigation> {
       const HomeScreen(),
       CartScreen(onContinueBrowsing: () => _setTab(0)),
       const ManageScreen(),
-      const SettingsScreen(),
+      SettingsScreen(onThemeChanged: widget.onThemeChanged),
     ];
 
     return Scaffold(

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
-import '../../core/utils/dummy_data.dart';
+import '../../data/database/database_helper.dart';
+import '../../models/category_model.dart';
+import '../../models/product_model.dart';
 import '../../widgets/category_chip.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/empty_state.dart';
@@ -18,16 +20,58 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedCategoryId = 0;
+  final _db = DatabaseHelper.instance;
+  
+  int? _selectedCategoryId;
   String _sortType = 'Default';
   bool _isGrid = true;
 
-  List<DummyProduct> get _visibleProducts {
-    final products = _selectedCategoryId == 0
-        ? DummyData.products
-        : DummyData.products
-              .where((product) => product.categoryId == _selectedCategoryId)
-              .toList();
+  List<CategoryModel> _categories = [];
+  List<ProductModel> _products = [];
+  bool _loadingCategories = true;
+  bool _loadingProducts = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await _loadCategories();
+    await _loadProducts();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final categories = await _db.getCategories();
+      setState(() {
+        _categories = categories;
+        _loadingCategories = false;
+      });
+    } catch (e) {
+      setState(() => _loadingCategories = false);
+    }
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      final products = await _db.getProducts();
+      setState(() {
+        _products = products;
+        _loadingProducts = false;
+      });
+    } catch (e) {
+      setState(() => _loadingProducts = false);
+    }
+  }
+
+  List<ProductModel> get _visibleProducts {
+    var products = _selectedCategoryId == null
+        ? _products
+        : _products
+            .where((product) => product.categoryId == _selectedCategoryId)
+            .toList();
 
     final sorted = [...products];
     if (_sortType == 'Harga terendah') {
@@ -38,17 +82,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return sorted;
   }
 
-  void _openDetail(DummyProduct product) {
+  void _openDetail(ProductModel product) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => ProductDetailScreen(product: product),
+        builder: (_) => ProductDetailScreen(productId: product.id!),
       ),
-    );
+    ).then((_) {
+      // Refresh products jika ada perubahan (misal: add to cart)
+      _loadProducts();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loadingProducts || _loadingCategories) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final products = _visibleProducts;
+    
+    // Tambahkan "All" category di awal list
+    final allCategories = [
+      CategoryModel(id: null, name: 'All'),
+      ..._categories,
+    ];
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -63,23 +120,24 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.lg),
-        SizedBox(
-          height: 40,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: DummyData.categories.length,
-            separatorBuilder: (_, index) =>
-                const SizedBox(width: AppSpacing.sm),
-            itemBuilder: (context, index) {
-              final category = DummyData.categories[index];
-              return CategoryChip(
-                label: category.name,
-                isSelected: _selectedCategoryId == category.id,
-                onTap: () => setState(() => _selectedCategoryId = category.id),
-              );
-            },
+        if (_categories.isNotEmpty)
+          SizedBox(
+            height: 40,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: allCategories.length,
+              separatorBuilder: (_, index) =>
+                  const SizedBox(width: AppSpacing.sm),
+              itemBuilder: (context, index) {
+                final category = allCategories[index];
+                return CategoryChip(
+                  label: category.name,
+                  isSelected: _selectedCategoryId == category.id,
+                  onTap: () => setState(() => _selectedCategoryId = category.id),
+                );
+              },
+            ),
           ),
-        ),
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
@@ -107,10 +165,13 @@ class _HomeScreenState extends State<HomeScreen> {
         if (products.isEmpty)
           EmptyState(
             title: 'Belum ada produk.',
-            description:
-                'Produk untuk kategori ini belum tersedia di katalog dummy.',
-            actionLabel: 'Tampilkan Semua',
-            onAction: () => setState(() => _selectedCategoryId = 0),
+            description: _selectedCategoryId == null
+                ? 'Tambahkan produk pertama melalui menu Manage.'
+                : 'Produk untuk kategori ini belum tersedia.',
+            actionLabel: _selectedCategoryId == null
+                ? 'Ke Manage Product'
+                : 'Tampilkan Semua',
+            onAction: () => setState(() => _selectedCategoryId = null),
           )
         else if (_isGrid)
           GridView.builder(
@@ -127,10 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
               final product = products[index];
               return ProductCard(
                 name: product.name,
-                categoryName: product.categoryName,
+                categoryName: product.categoryName ?? 'Unknown',
                 price: product.price,
                 stock: product.stock,
-                imageName: product.imageName,
+                imageName: product.imageName ?? 'product.png',
                 onTap: () => _openDetail(product),
               );
             },
@@ -141,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ProductListTile(
                 name: product.name,
-                categoryName: product.categoryName,
+                categoryName: product.categoryName ?? 'Unknown',
                 price: product.price,
                 stock: product.stock,
                 onTap: () => _openDetail(product),

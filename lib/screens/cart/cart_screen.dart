@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../widgets/cart_item_tile.dart';
 import '../../widgets/cart_summary.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
+import '../../widgets/empty_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/section_title.dart';
 
@@ -31,12 +31,34 @@ class _CartScreenState extends State<CartScreen> {
         description: 'Produk ini akan dihapus dari cart lokal.',
         onConfirm: () {
           setState(() => _isDeleted = true);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cart berhasil diperbarui.')),
-          );
+          ScaffoldMessenger.of(context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              const SnackBar(content: Text('Cart berhasil diperbarui.')),
+            );
         },
       ),
     );
+  }
+
+  void _incrementQuantity() {
+    setState(() => _quantity++);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Cart berhasil diperbarui.')),
+      );
+  }
+
+  void _decrementQuantity() {
+    if (_quantity <= 1) return;
+
+    setState(() => _quantity--);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Cart berhasil diperbarui.')),
+      );
   }
 
   @override
@@ -52,34 +74,20 @@ class _CartScreenState extends State<CartScreen> {
         ),
         const SizedBox(height: AppSpacing.lg),
         if (_isDeleted)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Cart masih kosong',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'Tambahkan produk dari katalog untuk melihat simulasi cart lokal.',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                ],
-              ),
-            ),
+          EmptyState(
+            title: 'Cart masih kosong.',
+            description:
+                'Tambahkan produk dari katalog untuk melihat simulasi cart lokal.',
+            actionLabel: 'Lihat Produk',
+            onAction: widget.onContinueBrowsing,
           )
         else
           CartItemTile(
             productName: 'Black Box Hoodie',
             price: _price,
             quantity: _quantity,
-            onIncrement: () => setState(() => _quantity++),
-            onDecrement: () {
-              if (_quantity > 1) setState(() => _quantity--);
-            },
+            onIncrement: _incrementQuantity,
+            onDecrement: _decrementQuantity,
             onDelete: _showDeleteDialog,
           ),
         const SizedBox(height: AppSpacing.md),

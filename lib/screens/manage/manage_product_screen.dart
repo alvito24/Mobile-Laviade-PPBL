@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/utils/dummy_data.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
+import '../../widgets/empty_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/product_manage_tile.dart';
 import 'product_form_screen.dart';
@@ -24,21 +25,25 @@ class ManageProductScreen extends StatelessWidget {
       builder: (_) => DeleteConfirmationDialog(
         title: 'Hapus produk?',
         description: 'Produk ini akan dihapus dari database lokal.',
-        onConfirm: () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Produk berhasil dihapus.')),
-        ),
+        onConfirm: () => ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(content: Text('Produk berhasil dihapus.')),
+          ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final products = DummyData.products;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Manage Product')),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(AppSpacing.md),
-          itemCount: DummyData.products.length + 1,
+          itemCount: products.isEmpty ? 2 : products.length + 1,
           separatorBuilder: (_, index) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -49,7 +54,17 @@ class ManageProductScreen extends StatelessWidget {
               );
             }
 
-            final product = DummyData.products[index - 1];
+            if (products.isEmpty) {
+              return EmptyState(
+                title: 'Belum ada produk.',
+                description:
+                    'Tambahkan produk pertama untuk katalog lokal Laviade.',
+                actionLabel: 'Tambah Produk',
+                onAction: () => _openForm(context),
+              );
+            }
+
+            final product = products[index - 1];
             return ProductManageTile(
               name: product.name,
               categoryName: product.categoryName,

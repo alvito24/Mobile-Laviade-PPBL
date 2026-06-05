@@ -32,9 +32,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _savePreferences() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Preferensi berhasil disimpan.')),
-    );
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Preferensi berhasil disimpan.')),
+      );
   }
 
   @override

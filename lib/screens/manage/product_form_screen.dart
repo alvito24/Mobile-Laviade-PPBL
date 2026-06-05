@@ -71,9 +71,11 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     if (!isValid) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Produk berhasil disimpan.')));
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Produk berhasil disimpan.')),
+      );
     Navigator.of(context).pop();
   }
 

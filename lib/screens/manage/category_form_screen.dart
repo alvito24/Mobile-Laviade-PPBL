@@ -38,9 +38,11 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     setState(() => _showValidation = true);
     if (_nameController.text.trim().isEmpty) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kategori berhasil disimpan.')),
-    );
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Kategori berhasil disimpan.')),
+      );
     Navigator.of(context).pop();
   }
 

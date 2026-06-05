@@ -5,6 +5,7 @@ import '../../core/constants/app_spacing.dart';
 import '../../core/utils/dummy_data.dart';
 import '../../widgets/category_chip.dart';
 import '../../widgets/custom_dropdown.dart';
+import '../../widgets/empty_state.dart';
 import '../../widgets/product_card.dart';
 import '../../widgets/product_list_tile.dart';
 import 'product_detail_screen.dart';
@@ -103,7 +104,15 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: AppSpacing.lg),
         Text('Katalog Produk', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: AppSpacing.md),
-        if (_isGrid)
+        if (products.isEmpty)
+          EmptyState(
+            title: 'Belum ada produk.',
+            description:
+                'Produk untuk kategori ini belum tersedia di katalog dummy.',
+            actionLabel: 'Tampilkan Semua',
+            onAction: () => setState(() => _selectedCategoryId = 0),
+          )
+        else if (_isGrid)
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -112,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: AppSpacing.sm,
               mainAxisSpacing: AppSpacing.sm,
-              childAspectRatio: 0.66,
+              childAspectRatio: 0.64,
             ),
             itemBuilder: (context, index) {
               final product = products[index];

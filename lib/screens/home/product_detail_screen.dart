@@ -15,9 +15,11 @@ class ProductDetailScreen extends StatelessWidget {
   final DummyProduct product;
 
   void _showAddToCartSnackbar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Produk berhasil ditambahkan ke cart.')),
-    );
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        const SnackBar(content: Text('Produk berhasil ditambahkan ke cart.')),
+      );
   }
 
   @override

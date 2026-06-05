@@ -4,6 +4,7 @@ import '../../core/constants/app_spacing.dart';
 import '../../core/utils/dummy_data.dart';
 import '../../widgets/category_manage_tile.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
+import '../../widgets/empty_state.dart';
 import '../../widgets/primary_button.dart';
 import 'category_form_screen.dart';
 
@@ -43,9 +44,11 @@ class ManageCategoryScreen extends StatelessWidget {
       builder: (_) => DeleteConfirmationDialog(
         title: 'Hapus kategori?',
         description: 'Kategori ini akan dihapus dari database lokal.',
-        onConfirm: () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kategori berhasil dihapus.')),
-        ),
+        onConfirm: () => ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(content: Text('Kategori berhasil dihapus.')),
+          ),
       ),
     );
   }
@@ -61,7 +64,7 @@ class ManageCategoryScreen extends StatelessWidget {
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(AppSpacing.md),
-          itemCount: categories.length + 1,
+          itemCount: categories.isEmpty ? 2 : categories.length + 1,
           separatorBuilder: (_, index) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -69,6 +72,16 @@ class ManageCategoryScreen extends StatelessWidget {
                 label: 'Tambah Kategori',
                 icon: Icons.add,
                 onPressed: () => _openForm(context),
+              );
+            }
+
+            if (categories.isEmpty) {
+              return EmptyState(
+                title: 'Belum ada kategori.',
+                description:
+                    'Tambahkan kategori pertama untuk mengelompokkan produk lokal.',
+                actionLabel: 'Tambah Kategori',
+                onAction: () => _openForm(context),
               );
             }
 

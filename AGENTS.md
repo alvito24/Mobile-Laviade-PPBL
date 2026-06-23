@@ -1,1165 +1,279 @@
 # AGENTS.md
-
 # AI Coding Agent Rules
 
-## Laviade Studio Mobile — Local Catalog & Cart
+## Laviade Studio Mobile — Local Commerce Simulation
+
+### Final Scope Assessment 2 + Tugas Besar
 
 ---
 
-## Project Context
+## 1. Project Context
 
-### Nama Project
+Project final adalah **Laviade Studio Mobile — Local Commerce Simulation**, Flutter mobile app local-first untuk katalog produk streetwear Laviade Studio, cart lokal, CRUD lokal, wishlist lokal, Simulasi Order Lokal, Product Review/Note lokal, Insight/Statistics lokal, dan preferences user.
 
-**Laviade Studio Mobile — Local Catalog & Cart**
+Baseline Assessment 2: **Laviade Studio Mobile — Local Catalog & Cart**. Baseline ini sudah memiliki Product Catalog, Product Detail, Product CRUD, Category CRUD, Cart Item CRUD, Settings/Preferences, SQLite, SharedPreferences, bottom navigation 4 tab, reusable widgets, dan arsitektur local-first.
 
-### Tujuan Project
-
-Project ini adalah aplikasi mobile Flutter sederhana untuk menampilkan katalog produk streetwear Laviade, mengelola data produk dan kategori, mengelola cart lokal, serta menyimpan preferensi pengguna.
-
-Project ini dibuat untuk **Assessment 2 mata kuliah PPBL** dengan fokus utama pada penerapan:
-
-1. SQLite untuk penyimpanan data lokal.
-2. SharedPreferences untuk penyimpanan preferensi user.
-
-Aplikasi ini bukan full e-commerce online. Project ini adalah local-first mobile catalog dan cart simulation app.
-
-### Target User
-
-1. **Customer**
-   Pengguna yang melihat katalog produk, membuka detail produk, menambahkan produk ke cart, mengubah quantity cart, dan mengatur preferensi sederhana.
-
-2. **Pengelola Data Demo**
-   Pengguna yang mengelola data produk dan kategori untuk kebutuhan demo CRUD SQLite.
-
-Catatan: Project ini tidak menggunakan login, register, atau role-based authentication. Perbedaan role hanya berdasarkan menu dan fungsi aplikasi.
-
-### Tech Stack
-
-* Mobile: Flutter
-* Language: Dart
-* State management: `setState`, `FutureBuilder`, dan state bawaan Flutter sederhana
-* Local database: SQLite
-* Local preferences: SharedPreferences
-* Backend: Tidak ada backend
-* API: Tidak ada API
-* Authentication: Tidak ada login/register
-* Styling/UI: Flutter Material Components dengan custom styling sederhana
-
-### Level Project
-
-Project ini adalah project akademik Assessment 2.
-Prioritas utama adalah:
-
-1. Correctness.
-2. Simplicity.
-3. Readability.
-4. Maintainability.
-5. Kemudahan presentasi dan tes coding.
-6. Kesesuaian dengan PRD dan Technical Design.
-
-Jangan membuat solusi terlalu kompleks seperti production-grade enterprise app.
-
-### Batasan Utama
-
-Agent harus menjaga scope project agar tetap sesuai Assessment 2.
-
-Tidak boleh membuat:
-
-1. Backend.
-2. API online.
-3. Login/register.
-4. Payment gateway.
-5. Checkout real.
-6. Shipping.
-7. Order history.
-8. Address management.
-9. Wishlist.
-10. Maps.
-11. Chart.
-12. Push notification.
-13. Upload gambar.
-14. Product size selection.
-15. Recently viewed.
-16. Review/rating produk.
-17. Fitur tambahan di luar PRD dan Technical Design.
+Tugas Besar adalah extension terkontrol, bukan project baru dari nol.
 
 ---
 
-## Core Principles
+## 2. Assessment 2 Baseline Protection
 
-1. Jangan over-engineering.
-2. Prioritaskan correctness, readability, dan maintainability.
-3. Ikuti PRD, Technical Design Document, dan scope final Assessment 2.
-4. Ikuti struktur project yang sudah ada.
-5. Jangan rewrite besar-besaran tanpa alasan yang jelas.
-6. Jangan menambah dependency baru tanpa izin.
-7. Jangan menghapus fitur existing tanpa konfirmasi.
-8. Jangan membuat fitur di luar scope.
-9. Jangan mengubah database schema tanpa menjelaskan dampaknya.
-10. Jangan membuat logic yang sulit dijelaskan saat presentasi atau tes coding.
-11. Gunakan solusi yang realistis untuk mahasiswa dan project assessment.
-12. Jika ada pilihan antara solusi sederhana dan solusi kompleks, pilih solusi sederhana selama memenuhi requirement.
-13. Jangan membuat UI terlihat seperti template generic atau terlalu berlebihan.
-14. Jangan membuat kode hanya “asal jalan”; pastikan mudah dipahami dan diuji.
-15. Selalu jaga agar aplikasi tetap local-first dan tidak bergantung pada server.
+1. Jangan merusak Home/Product Catalog.
+2. Jangan merusak Product Detail dan Add to Cart.
+3. Jangan merusak Product CRUD.
+4. Jangan merusak Category CRUD.
+5. Jangan merusak Cart Item CRUD.
+6. Jangan merusak Settings/SharedPreferences 6 key.
+7. Jangan mengubah bottom navigation 4 tab tanpa instruksi.
+8. Jangan menghapus reusable widgets existing tanpa alasan.
+9. Semua extension Tugas Besar harus kompatibel dengan baseline A2.
 
 ---
 
-## Workflow Rules
+## 3. Source Code Ground Truth Rules
 
-Saat menerima task, AI Agent harus mengikuti aturan kerja berikut:
-
-1. Baca context project terlebih dahulu.
-2. Pahami bahwa project ini adalah Flutter local-first app untuk Assessment 2.
-3. Analisis struktur file yang relevan sebelum mengubah kode.
-4. Jelaskan rencana singkat sebelum coding.
-5. Implementasikan satu task kecil dalam satu waktu.
-6. Jangan mengubah file yang tidak relevan.
-7. Jangan mengubah struktur besar project tanpa alasan kuat.
-8. Jangan membuat fitur tambahan di luar task.
-9. Jangan menambahkan dependency baru tanpa izin.
-10. Setelah selesai, jelaskan file apa saja yang dibuat atau diubah.
-11. Jelaskan alasan perubahan.
-12. Berikan cara testing manual.
-13. Sebutkan risiko, batasan, atau TODO jika ada.
-14. Jika task berisiko merusak fitur lain, sarankan membuat commit/checkpoint terlebih dahulu.
-15. Jika menemukan requirement yang ambigu, jelaskan asumsi yang digunakan sebelum implementasi.
-16. Jika fitur yang diminta berpotensi keluar scope, beri peringatan dan sarankan versi yang lebih sederhana.
+1. Source code real adalah ground truth teknis.
+2. Jika dokumen menyebut file yang belum ada, verifikasi struktur project dulu.
+3. Jika kode memiliki file berbeda dari dokumen, ikuti kode real dan dokumentasikan.
+4. Jangan mengarang file.
+5. Jangan rewrite project dari nol.
+6. Jika ada hal tidak pasti, tulis **perlu verifikasi manual**.
 
 ---
 
-## Coding Standards
+## 4. Tugas Besar Extension Rules
 
-### General Coding Rules
+Allowed dengan batasan:
+- Wishlist lokal.
+- Simulasi Order Lokal.
+- Product Review/Note lokal.
+- Insight/Statistics lokal.
+- Provider terbatas untuk global state ringan.
+- Chart lokal dengan `fl_chart`.
+- CustomPaint atau gesture tambahan.
+- SQLite migration aman.
 
-1. Gunakan naming yang jelas dan konsisten.
-2. Hindari duplikasi kode.
-3. Pisahkan logic sesuai tanggung jawab file.
-4. Jangan menaruh logic database langsung di UI jika bisa dipisahkan.
-5. Jangan menaruh logic berat di widget.
-6. Gunakan validasi input pada form.
-7. Gunakan error handling sederhana.
-8. Jangan hardcode secret, token, API key, password, atau credential.
-9. Gunakan komentar hanya jika membantu menjelaskan logic yang tidak langsung jelas.
-10. Jangan membuat abstraction berlebihan.
-11. Jangan membuat class/helper yang tidak digunakan.
-12. Jangan membuat file baru jika file existing masih relevan.
-13. Pastikan kode mudah dijelaskan saat presentasi.
-14. Pastikan setiap fitur yang dibuat bisa diuji secara manual.
-
-### Naming Rules
-
-Gunakan nama yang deskriptif.
-
-Contoh yang baik:
-
-* `ProductModel`
-* `CategoryModel`
-* `CartItemModel`
-* `DatabaseHelper`
-* `PreferenceHelper`
-* `ProductCard`
-* `CartItemTile`
-* `ManageProductScreen`
-* `ProductFormScreen`
-
-Hindari nama ambigu seperti:
-
-* `Data`
-* `Helper2`
-* `Page1`
-* `Temp`
-* `TestWidget`
-* `NewScreen`
-
-### Validation Rules
-
-Setiap form harus memiliki validasi sederhana.
-
-Product Form:
-
-1. Nama produk wajib diisi.
-2. Kategori wajib dipilih.
-3. Harga harus lebih dari 0.
-4. Stok tidak boleh negatif.
-5. Image name boleh kosong atau menggunakan placeholder default.
-6. Deskripsi boleh kosong atau singkat.
-
-Category Form:
-
-1. Nama kategori wajib diisi.
-2. Nama kategori tidak boleh hanya berisi spasi.
-
-Cart:
-
-1. Quantity minimal 1.
-2. Quantity tidak boleh negatif.
-3. Quantity tidak boleh melebihi stok produk jika validasi stok diterapkan.
-4. Jika produk yang sama ditambahkan lagi, quantity bertambah, bukan membuat item duplikat.
-
-SharedPreferences:
-
-1. Jika key belum ada, gunakan default value.
-2. Preferred view hanya boleh `grid` atau `list`.
-3. Dark mode hanya boolean.
-4. Sort type harus menggunakan value yang sudah ditentukan.
+Semua fitur baru harus local-first dan bisa dijelaskan sebagai requirement akademik PPBL.
 
 ---
 
-## Architecture Rules
+## 5. Flutter Coding Rules
 
-### Architecture Type
+1. Gunakan Flutter/Dart sederhana dan readable.
+2. Pisahkan screen, widgets, models, database helper, preferences helper, providers.
+3. Gunakan reusable components.
+4. Jangan membuat giant screen file jika bisa dipecah.
+5. Jangan menambah dependency tanpa izin.
+6. Jangan memakai pattern enterprise berat jika tidak dibutuhkan.
+7. Form state boleh tetap lokal dengan `setState`.
+8. Gunakan `FutureBuilder`/async loading dengan state UI yang jelas.
 
-Gunakan arsitektur sederhana:
+---
 
-**Flutter Local-First App dengan Layer Sederhana**
+## 6. Architecture Rules
 
-Layer utama:
+Layer final:
+- UI/screen layer.
+- Widget/component layer.
+- Model layer.
+- SQLite database layer.
+- SharedPreferences layer.
+- Provider/state layer ringan.
+- Navigation layer.
+- Utils/helper layer.
 
-1. Presentation Layer
-2. Data Layer
-3. Preference Layer
-4. Simple State Layer
+Jangan membuat Clean Architecture enterprise berlebihan.
 
-Jangan menggunakan clean architecture yang terlalu kompleks untuk Assessment 2.
+---
 
-### Folder Structure Rules
+## 7. SQLite Rules
 
-Ikuti struktur folder sederhana berikut jika project belum memiliki struktur yang lebih baik:
+1. SQLite adalah storage utama untuk data aplikasi.
+2. Data utama tidak disimpan di SharedPreferences.
+3. Tables final minimal: `categories`, `products`, `cart_items`, `wishlist_items`, `orders`, `order_items`, `product_notes`.
+4. CRUD final minimal: Category, Product, Cart Item, Wishlist Item, Order Simulation, Product Note.
+5. Gunakan parameterized query/helper method, bukan raw string acak di UI.
+6. Join/lookup data dilakukan di database/helper layer.
+7. Validasi stok cart harus dipertimbangkan.
+8. Delete product harus menjaga konsistensi relation cart/wishlist/order/note sesuai keputusan TDD.
 
-```text
-lib/
-├── main.dart
-├── app.dart
-│
-├── core/
-│   ├── constants/
-│   ├── theme/
-│   └── utils/
-│
-├── data/
-│   ├── database/
-│   ├── preferences/
-│   └── seed/
-│
-├── models/
-│
-├── screens/
-│   ├── home/
-│   ├── cart/
-│   ├── manage/
-│   └── settings/
-│
-├── widgets/
-│
-└── navigation/
-```
+---
 
-### Flutter-Specific Rules
+## 8. SQLite Migration Rules
 
-1. Pisahkan screen, widget, model, database helper, dan preference helper.
-2. Gunakan `setState` atau `FutureBuilder` untuk state sederhana.
-3. Jangan menggunakan Provider, Riverpod, Bloc, GetX, atau state management eksternal kecuali diminta.
-4. Jangan membuat screen terlalu besar jika bisa dipecah menjadi widget sederhana.
-5. Gunakan widget reusable untuk komponen yang dipakai berulang.
-6. Gunakan `ListView` untuk list yang bisa scroll.
-7. Gunakan `GridView` jika product catalog memakai mode grid.
-8. Gunakan `TextField` atau `TextFormField` untuk form.
-9. Gunakan `DropdownButtonFormField` untuk pilihan kategori.
-10. Gunakan `SnackBar` untuk feedback sukses/error sederhana.
-11. Gunakan `AlertDialog` untuk konfirmasi delete.
-12. Gunakan `BottomNavigationBar` atau `NavigationBar` untuk navigasi utama.
+1. Jangan mengubah schema tanpa migration plan.
+2. Baseline database version A2 adalah version 1 jika sesuai kode.
+3. Tugas Besar harus menaikkan version, misalnya version 2.
+4. Tambahkan `onUpgrade`.
+5. Jangan drop table lama tanpa backup/instruksi.
+6. Tambah table baru dengan `CREATE TABLE IF NOT EXISTS`.
+7. Untuk demo akademik, reset database boleh hanya jika disetujui dan setelah backup.
+8. Dokumentasikan risiko migration.
 
-### SQLite Rules
+---
 
-SQLite hanya digunakan untuk data utama berikut:
+## 9. SharedPreferences Rules
 
-1. `categories`
-2. `products`
-3. `cart_items`
-
-Jangan menambahkan tabel baru tanpa izin.
-
-Schema utama:
-
-`categories`:
-
-* id
-* name
-* created_at
-* updated_at
-
-`products`:
-
-* id
-* category_id
-* name
-* price
-* stock
-* description
-* image_name
-* created_at
-* updated_at
-
-`cart_items`:
-
-* id
-* product_id
-* quantity
-* created_at
-* updated_at
-
-Rules SQLite:
-
-1. Logic SQLite harus berada di database helper atau data layer.
-2. Jangan menaruh query langsung di widget.
-3. Gunakan method yang jelas seperti:
-
-   * `insertCategory`
-   * `getCategories`
-   * `updateCategory`
-   * `deleteCategory`
-   * `insertProduct`
-   * `getProducts`
-   * `getProductById`
-   * `updateProduct`
-   * `deleteProduct`
-   * `addToCart`
-   * `getCartItems`
-   * `updateCartQuantity`
-   * `deleteCartItem`
-4. Saat menghapus kategori, cek apakah kategori masih digunakan produk.
-5. Jika kategori masih digunakan produk, jangan hapus kategori.
-6. Saat menambahkan produk ke cart, cek apakah produk sudah ada.
-7. Jika produk sudah ada di cart, update quantity.
-8. Jika produk belum ada di cart, insert item baru.
-
-### SharedPreferences Rules
-
-SharedPreferences hanya digunakan untuk preferensi sederhana.
-
-Gunakan 6 key berikut:
-
-1. `user_name`
-2. `is_dark_mode`
-3. `last_selected_category_id`
-4. `product_sort_type`
-5. `preferred_view_mode`
-6. `cart_last_opened`
+Gunakan 6 key existing:
+- `user_name`
+- `is_dark_mode`
+- `last_selected_category_id`
+- `product_sort_type`
+- `preferred_view_mode`
+- `cart_last_opened`
 
 Rules:
-
-1. Jangan simpan produk, kategori, atau cart di SharedPreferences.
-2. Jangan simpan data sensitif di SharedPreferences.
-3. Gunakan default value jika key belum ada.
-4. Buat preference helper agar logic tidak tercecer di screen.
-5. Pastikan setiap key bisa didemokan saat presentasi.
-6. Jangan menambahkan key baru tanpa alasan dan izin.
+1. Jangan tambah key baru kecuali benar-benar perlu dan didokumentasikan.
+2. Jangan simpan produk/cart/wishlist/order/note di SharedPreferences.
+3. Preferences harus punya default value.
+4. Settings harus bisa save/load preference.
+5. Theme preference harus tidak merusak UI.
 
 ---
 
-## UI Rules
+## 10. Provider / State Management Rules
 
-### General UI Rules
-
-1. Ikuti design direction Laviade Studio.
-2. UI harus simple, clean, mobile-first, dan tidak over-engineering.
-3. Gunakan visual monochrome, off-white, hitam, putih, dan abu-abu.
-4. Hindari tampilan template generic.
-5. Hindari gradient random.
-6. Hindari icon/dekorasi random tanpa fungsi jelas.
-7. Hindari animasi kompleks.
-8. Gunakan spacing yang konsisten.
-9. Gunakan typography yang jelas.
-10. Pastikan visual hierarchy mudah dipahami.
-11. Pastikan tap target cukup besar untuk mobile.
-12. Pastikan layout tidak overflow.
-13. Pastikan screen bisa di-scroll jika konten panjang.
-14. Jangan membuat desain yang membutuhkan custom painter atau animasi kompleks.
-15. Jangan membuat UI yang membutuhkan backend/API.
-
-## UI Implementation Rules
-
-Bagian ini mengatur bagaimana AI Agent harus mengimplementasikan UI berdasarkan Design Handoff Specification final untuk project **Laviade Studio Mobile — Local Catalog & Cart**.
-
-Project ini adalah Flutter mobile app local-first untuk Assessment 2 PPBL. Fokus UI adalah katalog produk lokal, product/category CRUD, cart lokal sederhana, dan settings SharedPreferences. Jangan membuat UI yang mengarah ke full e-commerce online.
-
----
-
-### 1. Design Direction
-
-AI Agent harus mempertahankan arah desain berikut:
-
-1. Desain harus terasa seperti **mobile catalog streetwear lokal**.
-2. Visual harus **clean, bold, minimal, monochrome, dan streetwear-inspired**.
-3. UI harus mobile-first dan nyaman digunakan pada layar Android.
-4. Fokus visual utama ada pada:
-
-   * produk,
-   * kategori,
-   * harga,
-   * stok,
-   * cart,
-   * form CRUD,
-   * preferences.
-5. Jangan membuat UI terlalu fancy, terlalu ramai, atau terlalu mirip template AI generic.
-6. Jangan membuat tampilan marketplace penuh seperti Shopee/Tokopedia.
-7. Jangan membuat tampilan SaaS dashboard.
-8. Jangan menggunakan gradient random, icon dekoratif berlebihan, shadow berat, atau animasi kompleks.
-9. UI harus realistis untuk dibuat dengan Flutter Material Components.
-10. Prioritas utama adalah clarity, usability, dan implementability, bukan visual yang terlalu “wah”.
-
----
-
-### 2. Color Tokens
-
-Gunakan color token berikut secara konsisten.
-
-```dart
-colorPrimary = #111111
-colorOnPrimary = #FFFFFF
-colorBackground = #F9F9F6
-colorSurface = #FFFFFF
-colorSurfaceMuted = #F1F1EE
-colorTextPrimary = #111111
-colorTextSecondary = #666666
-colorBorder = #DADAD7
-colorAccent = #D8CBB8
-colorError = #BA1A1A
-colorSuccess = #12B76A
-colorWarning = #F79009
-```
+Provider boleh digunakan untuk:
+- Theme/preference state.
+- Cart count/summary refresh.
+- Wishlist state.
+- Order state.
+- Statistics refresh.
 
 Rules:
-
-1. Background utama gunakan off-white, bukan pure white jika memungkinkan.
-2. Primary button gunakan black background dan white text.
-3. Card gunakan white/surface background dengan border tipis.
-4. Error dan success boleh memakai warna, tetapi tetap harus memiliki text yang jelas.
-5. Jangan menambahkan warna baru tanpa alasan kuat.
-6. Jangan memakai gradient.
-7. Jangan memakai warna neon atau warna marketplace yang tidak sesuai brand Laviade.
-8. Jangan membuat semua elemen hitam pekat; gunakan gray/muted text untuk hierarchy.
+1. Gunakan Provider secara terbatas.
+2. Jangan pindahkan semua local form state ke Provider.
+3. Jangan memakai Bloc/Riverpod/GetX tanpa instruksi.
+4. Provider harus mudah dijelaskan saat presentasi.
+5. Provider tidak menggantikan SQLite sebagai storage.
 
 ---
 
-### 3. Typography Rules
+## 11. Chart Rules
 
-Gunakan typography yang sederhana, jelas, dan konsisten.
+1. Gunakan `fl_chart` hanya untuk statistik lokal.
+2. Chart membaca data agregasi dari SQLite.
+3. Chart tidak boleh memakai analytics online/API.
+4. Chart harus minimal dan mobile-friendly.
+5. Chart harus punya empty/error/loading state.
+6. Jangan gunakan chart terlalu kompleks.
 
-Jika font custom tersedia:
+---
 
-1. Heading: Archivo Narrow atau font bold/condensed sejenis.
-2. Body: Inter atau font sans-serif readable.
+## 12. Custom Widget Rules
 
-Jika font custom tidak tersedia:
+Minimal 1 custom widget per anggota. Mapping final:
+- Anggota 1: `ProductCard`, `CategoryChip`, `WishlistToggleButton`.
+- Anggota 2: `CartItemCard`, `QuantityControl`, `OrderStatusStepper`.
+- Anggota 3: `PreferenceSelect`, `SettingsTile`, `StatCard`.
 
-1. Gunakan default Flutter font.
-2. Gunakan font weight dan size untuk membentuk hierarchy.
+Custom widget harus reusable, punya props, dan bukan sekadar `onTap`.
 
-Rekomendasi type scale:
+---
 
-```text
-Display: 40–48, weight 700
-Headline Large: 28–32, weight 700
-Headline Medium: 22–24, weight 600/700
-Body Large: 16, weight 400/500
-Body Medium: 14, weight 400/500
-Label: 12, weight 600/700
-Caption: 11–12, weight 400/500
-```
+## 13. Custom Drawing / Gesture Rules
+
+Final custom drawing utama: `OrderStatusStepper` dengan `CustomPaint`.
 
 Rules:
-
-1. Screen title harus jelas dan mudah dibaca.
-2. Product name harus lebih menonjol dari category/caption.
-3. Harga produk harus jelas.
-4. Caption/helper text tidak boleh terlalu kecil.
-5. Jangan menggunakan terlalu banyak variasi ukuran font.
-6. Jangan menggunakan uppercase untuk semua teks.
-7. Gunakan uppercase hanya untuk label kecil seperti badge/chip jika diperlukan.
-8. Validation message harus terbaca dan dekat dengan input.
+1. Tampilkan di Order Detail Simulation.
+2. Status: Dibuat → Diproses → Selesai.
+3. Visual dot + line.
+4. Jangan membuat animasi rumit.
+5. Jangan menggunakan Maps.
+6. Jika gesture tambahan dipakai, gunakan hanya gesture sederhana seperti swipe/long press dan jangan menggantikan CustomPaint requirement.
 
 ---
 
-### 4. Spacing Rules
+## 14. UI Implementation Rules
 
-Gunakan spacing berbasis kelipatan 4.
-
-```text
-spaceXs = 4
-spaceSm = 8
-spaceMd = 16
-spaceLg = 24
-spaceXl = 32
-space2Xl = 48
-```
-
-Rules:
-
-1. Padding horizontal screen utama: 16px.
-2. Jarak antar section: 24px.
-3. Jarak antar card/list item: 12–16px.
-4. Padding internal card: 12–16px.
-5. Tinggi button utama: 48–52px.
-6. Input field harus memiliki padding vertical yang nyaman.
-7. Jangan membuat elemen terlalu mepet.
-8. Jangan membuat whitespace berlebihan sampai screen terasa kosong.
-9. Semua form screen harus scrollable jika konten panjang.
-10. Pastikan bottom navigation tidak menutupi konten.
+1. Ikuti `design_handoff.md`.
+2. Visual: clean, monochrome, off-white, bold, streetwear-inspired.
+3. Bottom navigation hanya untuk Home, Cart, Manage, Settings.
+4. Sub-screen memakai AppBar back button tanpa bottom nav.
+5. UI States Reference tidak diimplementasikan sebagai route app.
+6. Hapus/abaikan artifact Stitch yang masih mengandung bottom nav pada sub-screen.
+7. Jangan menampilkan size/variant/material/fit/care.
+8. Order harus selalu disebut Simulasi Order Lokal.
+9. Jangan memakai copy checkout, payment, shipping, delivery, address, Maps.
+10. Chart harus local statistics.
 
 ---
 
-### 5. Border Radius, Border, and Elevation Rules
+## 15. Design Handoff Rules
 
-Gunakan radius sederhana:
-
-```text
-radiusSm = 4
-radiusMd = 8
-radiusLg = 12
-radiusFull = 999
-```
-
-Rules:
-
-1. Button menggunakan radius 8px.
-2. Card menggunakan radius 12px.
-3. Chip/badge boleh menggunakan radius full.
-4. Gunakan border tipis untuk card/input.
-5. Hindari shadow berat.
-6. Elevation boleh sangat subtle hanya jika diperlukan.
-7. Jangan membuat radius terlalu besar seperti app playful/social media.
+1. Dynamic UI harus map ke SQLite, SharedPreferences, Provider/local state, atau calculated value.
+2. Jangan menambah field database hanya karena visual dekoratif.
+3. Jika high-fidelity UI bertentangan dengan PRD/TDD, ikuti PRD/TDD dan final handoff rule.
+4. Design handoff final mengoverride file desain lama A2.
 
 ---
 
-### 6. Component Naming Convention
+## 16. Task Execution Rules
 
-Gunakan nama komponen yang jelas dan sesuai fungsi.
-
-Recommended components:
-
-```text
-AppBottomNav
-AppTopBar
-PrimaryButton
-SecondaryButton
-CustomTextField
-CustomDropdown
-ProductCard
-ProductListTile
-ProductManageTile
-CategoryManageTile
-CartItemTile
-QuantityControl
-CategoryChip
-StockBadge
-SettingTile
-PreferenceSelect
-ProfileNameInput
-SessionInfoCard
-EmptyState
-LoadingState
-ErrorState
-DeleteConfirmationDialog
-SuccessSnackbar
-```
-
-Rules:
-
-1. Nama komponen harus PascalCase.
-2. Nama file menggunakan snake_case.
-3. Jangan menggunakan nama ambigu seperti `CardWidget`, `Item`, `Box`, `Page1`, `Helper2`, atau `ComponentNew`.
-4. Komponen yang dipakai lebih dari sekali harus dipisah ke folder `widgets/`.
-5. Jangan membuat satu screen berisi semua UI tanpa reusable component.
-6. Jangan membuat komponen terlalu abstrak jika hanya dipakai sekali.
-7. Props/data komponen harus sesuai model dan Design Handoff.
-8. Jangan membuat komponen yang membutuhkan data di luar PRD/TDD.
+1. Baca dokumen sebelum coding.
+2. Jelaskan rencana implementasi sebelum mengubah kode.
+3. Sebutkan file yang akan dibaca.
+4. Sebutkan file yang akan dibuat/diubah.
+5. Kerjakan satu task kecil atau batch aman.
+6. Setelah coding, jelaskan perubahan file.
+7. Berikan manual test.
+8. Jangan lanjut task berikutnya sebelum task sekarang aman.
 
 ---
 
-### 7. Screen Implementation Rules
+## 17. Testing Rules
 
-Screen final yang boleh dibuat:
-
-1. `SplashScreen`
-2. `HomeScreen`
-3. `ProductDetailScreen`
-4. `CartScreen`
-5. `ManageScreen`
-6. `ManageProductScreen`
-7. `ProductFormScreen`
-8. `ManageCategoryScreen`
-9. `CategoryFormScreen`
-10. `SettingsScreen`
-
-Rules:
-
-1. Main tab screen menggunakan bottom navigation:
-
-   * Home
-   * Cart
-   * Manage
-   * Settings
-2. Detail dan form screen menggunakan back button.
-3. Main tab screen tidak perlu back button.
-4. Jangan tampilkan cart/bag icon di top bar karena Cart sudah ada di bottom navigation.
-5. Jangan membuat screen tambahan tanpa requirement.
-6. Jangan membuat login/register/onboarding panjang.
-7. Jangan membuat checkout/payment/shipping/order/address/wishlist screen.
-8. Jangan membuat admin dashboard kompleks.
-9. Jangan membuat chart/maps/notification screen.
+Minimal test:
+- `flutter analyze`.
+- Run app.
+- Navigasi semua screen.
+- Test Product CRUD.
+- Test Category CRUD.
+- Test Cart CRUD + stock validation.
+- Test Wishlist CRUD.
+- Test Order Simulation CRUD.
+- Test Product Note CRUD.
+- Test SharedPreferences persistence.
+- Test Provider refresh state.
+- Test Chart empty/default.
+- Test CustomPaint OrderStatusStepper.
+- Regression test fitur A2.
 
 ---
 
-### 8. Responsive Behavior
+## 18. Git / Change Safety Rules
 
-Aplikasi ditargetkan untuk Android mobile.
-
-Rules:
-
-1. Semua screen harus berada di dalam `SafeArea` jika diperlukan.
-2. Semua screen panjang harus scrollable.
-3. Form screen harus tetap usable saat keyboard muncul.
-4. Bottom navigation tidak boleh menutupi konten.
-5. Button, input, dan icon action harus mudah ditekan.
-6. Tap target minimal sekitar 44–48px.
-7. Text tidak boleh overflow.
-8. Product grid harus adaptif pada lebar mobile umum.
-9. Gunakan `ListView`, `SingleChildScrollView`, `GridView`, `Expanded`, atau `Flexible` dengan tepat.
-10. Jangan menggunakan fixed width/height yang membuat layout mudah overflow.
-11. Jangan pixel-perfect secara kaku dari desain Stitch; prioritaskan responsive Flutter layout.
-12. Test minimal di satu emulator kecil dan satu emulator ukuran normal.
+1. Backup/commit baseline A2 sebelum major change.
+2. Commit per batch jika memungkinkan.
+3. Jangan menghapus file baseline tanpa instruksi.
+4. Untuk schema migration, buat commit terpisah.
+5. Jika perubahan besar gagal, mudah rollback.
 
 ---
 
-### 9. Required UI States
+## 19. Forbidden Actions
 
-AI Agent wajib mempertimbangkan state berikut saat membuat screen.
-
-#### Product Catalog
-
-1. Default: daftar produk tampil.
-2. Loading: “Memuat produk...”
-3. Empty: “Belum ada produk.”
-4. Error: “Data produk gagal dimuat.”
-
-#### Product Detail
-
-1. Default: detail produk tampil.
-2. Loading: “Memuat detail produk...”
-3. Error/not found: “Produk tidak ditemukan.”
-4. Success: snackbar “Produk berhasil ditambahkan ke cart.”
-
-#### Cart
-
-1. Default: cart item dan total tampil.
-2. Loading: “Memuat cart...”
-3. Empty: “Cart masih kosong.”
-4. Error: “Cart gagal dimuat.”
-5. Success: snackbar “Cart berhasil diperbarui.”
-6. Delete confirmation: “Hapus item?”
-
-#### Manage Product
-
-1. Default: list produk tampil.
-2. Loading: “Memuat produk...”
-3. Empty: “Belum ada produk.”
-4. Error: “Data produk gagal dimuat.”
-5. Success: snackbar “Produk berhasil disimpan.”
-6. Delete confirmation: “Hapus produk?”
-
-#### Product Form
-
-1. Default: form kosong atau form edit terisi.
-2. Loading save: “Menyimpan produk...”
-3. Validation error:
-
-   * “Nama produk wajib diisi.”
-   * “Kategori wajib dipilih.”
-   * “Harga harus lebih dari 0.”
-   * “Stok tidak boleh negatif.”
-4. Error: snackbar “Produk gagal disimpan.”
-5. Success: snackbar “Produk berhasil disimpan.”
-
-#### Manage Category
-
-1. Default: list kategori tampil.
-2. Loading: “Memuat kategori...”
-3. Empty: “Belum ada kategori.”
-4. Error: “Data kategori gagal dimuat.”
-5. Success: snackbar “Kategori berhasil disimpan.”
-6. Delete confirmation: “Hapus kategori?”
-7. Delete conflict error: “Kategori tidak bisa dihapus karena masih digunakan produk.”
-
-#### Category Form
-
-1. Default: form kosong atau form edit terisi.
-2. Loading save: “Menyimpan kategori...”
-3. Validation error: “Nama kategori wajib diisi.”
-4. Error: snackbar “Kategori gagal disimpan.”
-5. Success: snackbar “Kategori berhasil disimpan.”
-
-#### Settings
-
-1. Default: preferences tampil.
-2. Loading: “Memuat preferensi...”
-3. Empty default: user name tampil sebagai “Guest.”
-4. Error: snackbar “Preferensi gagal disimpan.”
-5. Success: snackbar “Preferensi berhasil disimpan.”
+- Jangan rewrite project dari nol.
+- Jangan merusak fitur A2.
+- Jangan menggunakan Maps/library Maps.
+- Jangan membuat backend/API production.
+- Jangan membuat payment gateway real.
+- Jangan membuat login production.
+- Jangan membuat marketplace multi-seller.
+- Jangan menambah dependency tanpa izin.
+- Jangan mengubah database schema tanpa migration plan.
+- Jangan membuat UI generic.
+- Jangan menghapus file baseline tanpa instruksi.
+- Jangan membuat order simulation terlihat seperti checkout/payment real.
+- Jangan membuat shipping/address/delivery flow.
+- Jangan membuat product size/variant/material/fit/care.
+- Jangan membuat upload image production.
+- Jangan membuat analytics online.
 
 ---
 
-### 10. Data Binding UI Rules
+## 20. Final Reminder for AI Agent
 
-UI harus mengikuti data dari Technical Design.
-
-SQLite tables:
-
-1. `categories`
-2. `products`
-3. `cart_items`
-
-SharedPreferences keys:
-
-1. `user_name`
-2. `is_dark_mode`
-3. `last_selected_category_id`
-4. `product_sort_type`
-5. `preferred_view_mode`
-6. `cart_last_opened`
-
-Rules:
-
-1. Product UI hanya boleh membutuhkan field:
-
-   * `id`
-   * `category_id`
-   * `name`
-   * `price`
-   * `stock`
-   * `description`
-   * `image_name`
-   * category name hasil join/lookup
-2. Cart UI hanya boleh membutuhkan:
-
-   * `cart_item_id`
-   * `product_id`
-   * `product_name`
-   * `price`
-   * `quantity`
-   * `subtotal`
-   * `total`
-3. Settings UI hanya boleh memakai 6 key SharedPreferences yang sudah ditentukan.
-4. Jangan membuat UI yang membutuhkan field database baru.
-5. Jangan membuat UI untuk material, fit, care, size, color, rating, review, address, order, payment, shipping, atau wishlist.
-6. Jangan membuat UI upload image. `image_name` hanya nama asset lokal.
-7. Jika desain masih menampilkan detail tambahan, sederhanakan menjadi `description`.
-
----
-
-### 11. Anti-Generic / Anti-AI Template Rules
-
-Agar UI tidak terlihat seperti template AI generic, ikuti aturan berikut:
-
-1. Jangan menggunakan gradient ungu/biru atau gradient acak.
-2. Jangan menggunakan banyak shadow/glow.
-3. Jangan menggunakan ilustrasi random yang tidak relevan dengan Laviade.
-4. Jangan membuat card terlalu banyak dalam satu screen.
-5. Jangan membuat marketplace UI yang ramai.
-6. Jangan membuat dashboard statistik untuk Manage.
-7. Jangan memakai icon terlalu banyak.
-8. Jangan membuat CTA terlalu banyak dalam satu screen.
-9. Jangan membuat text marketing berlebihan.
-10. Gunakan copy yang pendek, jelas, dan fungsional.
-11. Pertahankan karakter streetwear yang simple dan bold.
-12. Gunakan whitespace yang cukup.
-13. Fokuskan visual pada produk dan fungsi utama.
-14. Gunakan placeholder image yang konsisten, bukan image random berlebihan.
-15. Jangan membuat UI terlihat seperti app template SaaS.
-
----
-
-### 12. Developer-Friendly Implementation Rules
-
-UI harus mudah diimplementasikan di Flutter.
-
-Rules:
-
-1. Gunakan widget standar Flutter jika cukup:
-
-   * `Scaffold`
-   * `AppBar`
-   * `BottomNavigationBar` / `NavigationBar`
-   * `ListView`
-   * `GridView`
-   * `SingleChildScrollView`
-   * `Column`
-   * `Row`
-   * `Container`
-   * `Card`
-   * `TextFormField`
-   * `DropdownButtonFormField`
-   * `Switch`
-   * `SnackBar`
-   * `AlertDialog`
-2. Jangan membuat komponen yang membutuhkan custom painter.
-3. Jangan membuat animasi kompleks.
-4. Jangan membuat layout yang butuh package tambahan.
-5. Jangan membuat image picker/upload.
-6. Jangan membuat UI yang bergantung pada koneksi internet.
-7. Jangan membuat UI yang membutuhkan backend/API.
-8. Jangan membuat state management kompleks.
-9. Pisahkan screen dan reusable widget.
-10. Jangan menaruh semua UI dalam satu file besar.
-11. Jangan menaruh query SQLite langsung di widget UI jika bisa dipisahkan.
-12. Jangan membuat UI yang sulit dites secara manual.
-13. Setiap action penting harus punya feedback:
-
-* snackbar,
-* validation message,
-* dialog,
-* empty/error state.
-
-14. Jika implementasi desain terlalu sulit, sederhanakan tanpa mengubah fungsi utama.
-15. Prioritaskan working UI yang rapi dibanding pixel-perfect yang rapuh.
-
----
-
-### 13. Forbidden UI Actions
-
-AI Agent tidak boleh melakukan hal berikut saat implementasi UI:
-
-1. Jangan membuat login/register.
-2. Jangan membuat checkout.
-3. Jangan membuat payment.
-4. Jangan membuat shipping.
-5. Jangan membuat address.
-6. Jangan membuat order history.
-7. Jangan membuat wishlist.
-8. Jangan membuat maps.
-9. Jangan membuat chart.
-10. Jangan membuat notification.
-11. Jangan membuat recently viewed.
-12. Jangan membuat product size selection.
-13. Jangan membuat product rating/review.
-14. Jangan membuat image upload.
-15. Jangan membuat backend/API screen.
-16. Jangan membuat admin dashboard kompleks.
-17. Jangan membuat material/fit/care sebagai field terpisah.
-18. Jangan membuat color/size variant selector.
-19. Jangan membuat preferred view selain Grid/List.
-20. Jangan membuat UI yang membutuhkan tabel database baru.
-21. Jangan membuat UI yang membutuhkan SharedPreferences key baru tanpa izin.
-22. Jangan menggunakan copy “cloud bucket”.
-23. Jangan menggunakan copy yang mengarah ke transaksi real seperti “Proceed to Checkout”.
-24. Jangan menampilkan shipping/payment/order wording.
-25. Jangan membuat UI yang keluar dari scope Assessment 2.
-
----
-
-### 14. Final UI Reminder
-
-Saat mengimplementasikan UI, AI Agent harus selalu mengecek:
-
-1. Apakah screen ini ada di PRD?
-2. Apakah data yang ditampilkan ada di Technical Design?
-3. Apakah UI ini bisa dibuat dengan Flutter sederhana?
-4. Apakah UI ini menambah fitur baru?
-5. Apakah state default/loading/empty/error/success sudah dipikirkan?
-6. Apakah action user punya feedback?
-7. Apakah desain masih clean, monochrome, dan streetwear-inspired?
-8. Apakah implementasi ini bisa dijelaskan saat presentasi Assessment 2?
-
-Jika jawabannya meragukan, pilih solusi yang lebih sederhana dan sesuai scope.
-
-
-### Screen Rules
-
-Screen final yang boleh dibuat:
-
-1. Splash Screen.
-2. Home / Product Catalog Screen.
-3. Product Detail Screen.
-4. Cart Screen.
-5. Manage Screen.
-6. Manage Product Screen.
-7. Product Form Screen.
-8. Manage Category Screen.
-9. Category Form Screen.
-10. Settings / Profile Screen.
-
-Jangan membuat screen berikut:
-
-1. Login.
-2. Register.
-3. Checkout.
-4. Payment.
-5. Shipping.
-6. Address.
-7. Order History.
-8. Wishlist.
-9. Notification.
-10. Maps.
-11. Chart.
-12. Admin Dashboard kompleks.
-
-### Component Rules
-
-Gunakan komponen reusable sederhana:
-
-1. `AppBottomNav`
-2. `AppTopBar`
-3. `PrimaryButton`
-4. `SecondaryButton`
-5. `ProductCard`
-6. `ProductManageTile`
-7. `CategoryManageTile`
-8. `CartItemTile`
-9. `QuantityControl`
-10. `CategoryChip`
-11. `StockBadge`
-12. `CustomTextField`
-13. `CustomDropdown`
-14. `SettingTile`
-15. `EmptyState`
-16. `LoadingState`
-17. `ErrorState`
-
-### State UI Rules
-
-Jika relevan, setiap fitur harus memiliki:
-
-1. Default state.
-2. Loading state.
-3. Empty state.
-4. Error state.
-5. Success state.
-6. Validation state.
-
-Contoh state yang wajib dipertimbangkan:
-
-Product Catalog:
-
-* Empty: “Belum ada produk.”
-* Loading: “Memuat produk...”
-* Error: “Data produk gagal dimuat.”
-
-Cart:
-
-* Empty: “Cart masih kosong.”
-* Error: “Cart gagal dimuat.”
-* Success: “Cart berhasil diperbarui.”
-
-Product Form:
-
-* Validation: “Nama produk wajib diisi.”
-* Validation: “Kategori wajib dipilih.”
-* Validation: “Harga harus lebih dari 0.”
-* Validation: “Stok tidak boleh negatif.”
-
-Category Form:
-
-* Validation: “Nama kategori wajib diisi.”
-
-Settings:
-
-* Success: “Preferensi berhasil disimpan.”
-* Error: “Preferensi gagal disimpan.”
-
-### Top Bar Rules
-
-1. Screen utama bottom navigation tidak perlu back button.
-2. Back button hanya digunakan pada detail dan form.
-3. Jangan tampilkan cart/bag icon di top bar karena Cart sudah ada di bottom navigation.
-4. Top bar harus sederhana dan konsisten.
-
----
-
-## Testing Rules
-
-Setiap fitur harus punya cara test manual.
-
-### General Testing Rules
-
-1. Minimal cek positive case dan negative case.
-2. Pastikan fitur baru tidak merusak fitur existing.
-3. Pastikan data SQLite tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-4. Pastikan SharedPreferences tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-5. Pastikan empty state muncul saat data kosong.
-6. Pastikan validation message muncul saat input tidak valid.
-7. Pastikan success feedback muncul saat aksi berhasil.
-8. Jika ada command test/lint/build, sebutkan.
-
-### Manual Test: Product CRUD
-
-Positive case:
-
-1. Tambah produk valid.
-2. Produk muncul di Manage Product.
-3. Produk muncul di Home Catalog.
-4. Edit produk.
-5. Data produk berubah.
-6. Delete produk.
-7. Produk hilang dari list.
-
-Negative case:
-
-1. Nama produk kosong.
-2. Kategori belum dipilih.
-3. Harga 0.
-4. Harga negatif.
-5. Stok negatif.
-
-### Manual Test: Category CRUD
-
-Positive case:
-
-1. Tambah kategori valid.
-2. Kategori muncul di list.
-3. Edit kategori.
-4. Delete kategori yang belum dipakai produk.
-
-Negative case:
-
-1. Nama kategori kosong.
-2. Nama kategori hanya spasi.
-3. Delete kategori yang masih digunakan produk.
-
-### Manual Test: Cart
-
-Positive case:
-
-1. Tambah produk ke cart.
-2. Produk muncul di cart.
-3. Tambah produk yang sama lagi.
-4. Quantity bertambah.
-5. Update quantity.
-6. Total berubah.
-7. Delete item cart.
-
-Negative case:
-
-1. Quantity 0.
-2. Quantity negatif.
-3. Produk tidak ditemukan.
-4. Quantity melebihi stok jika validasi stok diterapkan.
-
-### Manual Test: SharedPreferences
-
-Positive case:
-
-1. Simpan user name.
-2. Ubah dark mode.
-3. Pilih sort type.
-4. Pilih view mode.
-5. Buka cart untuk menyimpan cart last opened.
-6. Tutup aplikasi.
-7. Buka kembali aplikasi.
-8. Preferences tetap tersimpan.
-
-Negative case:
-
-1. Key belum pernah disimpan.
-2. Preferred view value tidak dikenal.
-3. Last selected category mengarah ke kategori yang sudah dihapus.
-
-### Build / Run Check
-
-Jika Flutter project sudah tersedia, gunakan command berikut saat relevan:
-
-```bash
-flutter pub get
-flutter analyze
-flutter run
-flutter build apk
-```
-
-Agent harus menjelaskan hasil command jika menjalankannya.
-
----
-
-## Git / Change Management Rules
-
-1. Satu task = satu perubahan kecil.
-2. Jangan menggabungkan banyak fitur dalam satu implementasi.
-3. Jelaskan perubahan sebelum coding.
-4. Jelaskan perubahan setelah coding.
-5. Jika perubahan berisiko, sarankan commit/checkpoint dulu.
-6. Jangan menghapus file penting tanpa konfirmasi.
-7. Jangan mengubah struktur folder besar tanpa alasan.
-8. Jangan mengubah database schema tanpa menjelaskan dampaknya.
-9. Jika perubahan gagal, jelaskan rollback atau cara memperbaikinya.
-10. Jika ada bug di luar task, catat sebagai TODO, jangan langsung mengubah banyak hal.
-
-Contoh task yang baik:
-
-* Implement Product Model.
-* Implement Category CRUD.
-* Implement Product Form validation.
-* Implement Add to Cart.
-* Implement SharedPreferences helper.
-* Add empty state for cart.
-
-Contoh task yang buruk:
-
-* Build entire app.
-* Create full e-commerce.
-* Add checkout and payment.
-* Redesign all screens.
-* Rewrite all database logic.
-
----
-
-## Forbidden Actions
-
-AI Agent tidak boleh melakukan hal berikut:
-
-1. Jangan rewrite seluruh project.
-2. Jangan mengubah stack tanpa izin.
-3. Jangan menghapus file penting tanpa konfirmasi.
-4. Jangan membuat dependency baru tanpa alasan kuat dan izin.
-5. Jangan menyimpan secret, token, password, atau API key di kode.
-6. Jangan membuat fitur tambahan yang tidak diminta.
-7. Jangan mengubah database schema tanpa menjelaskan dampaknya.
-8. Jangan membuat backend/API.
-9. Jangan membuat login/register.
-10. Jangan membuat payment gateway.
-11. Jangan membuat checkout real.
-12. Jangan membuat shipping atau address management.
-13. Jangan membuat order history.
-14. Jangan membuat wishlist.
-15. Jangan membuat maps.
-16. Jangan membuat chart.
-17. Jangan membuat push notification.
-18. Jangan membuat upload gambar.
-19. Jangan membuat product size selection.
-20. Jangan membuat recently viewed.
-21. Jangan membuat review/rating.
-22. Jangan menambahkan Provider/Riverpod/Bloc/GetX tanpa izin.
-23. Jangan menaruh query SQLite langsung di UI widget.
-24. Jangan menyimpan data produk/kategori/cart di SharedPreferences.
-25. Jangan membuat UI yang membutuhkan data atau field yang tidak ada di Technical Design.
-26. Jangan membuat fitur yang sulit dijelaskan saat presentasi Assessment 2.
-27. Jangan membuat solusi enterprise/production-grade yang terlalu berat untuk scope project ini.
-
----
-
-## Final Reminder for AI Agent
-
-Project ini harus tetap sederhana, jelas, dan sesuai Assessment 2.
-
-Prioritas utama:
-
-1. SQLite berjalan untuk categories, products, dan cart_items.
-2. SharedPreferences berjalan untuk 6 key yang sudah ditentukan.
-3. Product CRUD lengkap.
-4. Category CRUD lengkap.
-5. Cart management sederhana berjalan.
-6. UI sesuai desain final dan realistis untuk Flutter.
-7. Setiap fitur bisa dijelaskan dan dites manual.
-
-Jika ada konflik antara keinginan membuat fitur menarik dan scope project, pilih scope project.
-
-Jangan mengejar aplikasi yang terlihat besar.
-Bangun aplikasi kecil yang benar, stabil, mudah dipahami, dan sesuai requirement.
+Project ini dinilai dari kesesuaian requirement akademik, stabilitas local-first, dan kemampuan menjelaskan implementasi. Prioritaskan fitur yang bisa didemokan: SQLite, SharedPreferences, 6 CRUD, Provider, Chart, custom widgets, custom drawing, dan regression safety A2. Jangan membuat aplikasi terlihat seperti marketplace production.

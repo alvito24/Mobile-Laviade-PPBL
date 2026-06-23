@@ -7,7 +7,9 @@ import '../../core/constants/app_spacing.dart';
 import '../../navigation/main_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.onThemeChanged});
+
+  final VoidCallback? onThemeChanged;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -20,7 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => const MainNavigation()),
+        MaterialPageRoute<void>(
+          builder: (_) => MainNavigation(onThemeChanged: widget.onThemeChanged),
+        ),
       );
     });
   }

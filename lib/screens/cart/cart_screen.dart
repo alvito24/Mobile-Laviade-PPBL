@@ -8,6 +8,7 @@ import '../../widgets/cart_item_tile.dart';
 import '../../widgets/cart_summary.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
 import '../../widgets/empty_state.dart';
+import '../../widgets/error_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/section_title.dart';
 
@@ -27,6 +28,7 @@ class _CartScreenState extends State<CartScreen> {
   List<CartItemModel> _cartItems = [];
   bool _loading = true;
   bool _updating = false;
+  String? _loadError;
 
   @override
   void initState() {
@@ -44,6 +46,11 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _loadCart() async {
+    setState(() {
+      _loading = true;
+      _loadError = null;
+    });
+
     try {
       final items = await _db.getCartItems();
       setState(() {
@@ -51,7 +58,10 @@ class _CartScreenState extends State<CartScreen> {
         _loading = false;
       });
     } catch (e) {
-      setState(() => _loading = false);
+      setState(() {
+        _loading = false;
+        _loadError = 'Cart gagal dimuat.';
+      });
     }
   }
 
@@ -160,6 +170,10 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_loadError != null) {
+      return ErrorState(title: _loadError!, onAction: _loadCart);
     }
 
     final total = _calculateTotal();

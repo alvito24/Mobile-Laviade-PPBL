@@ -201,6 +201,15 @@ class DatabaseHelper {
 
   Future<int> addToCart(int productId, {int quantity = 1}) async {
     final db = await database;
+
+    if (quantity < 1) {
+      throw Exception('Quantity tidak boleh kurang dari 1');
+    }
+
+    final product = await getProductById(productId);
+    if (product == null) {
+      throw Exception('Produk tidak ditemukan.');
+    }
     
     // Check if product already in cart
     final existing = await db.query(
@@ -213,8 +222,15 @@ class DatabaseHelper {
       // Update quantity if product already exists
       final cartItem = CartItemModel.fromMap(existing.first);
       final newQuantity = cartItem.quantity + quantity;
+      if (newQuantity > product.stock) {
+        throw Exception('Stok produk tidak mencukupi.');
+      }
       return await updateCartQuantity(cartItem.id!, newQuantity);
     } else {
+      if (quantity > product.stock) {
+        throw Exception('Stok produk tidak mencukupi.');
+      }
+
       // Insert new cart item
       final cartItem = CartItemModel(
         productId: productId,
@@ -248,6 +264,26 @@ class DatabaseHelper {
     
     if (newQuantity < 1) {
       throw Exception('Quantity tidak boleh kurang dari 1');
+    }
+
+    final cartRows = await db.query(
+      'cart_items',
+      where: 'id = ?',
+      whereArgs: [cartItemId],
+    );
+
+    if (cartRows.isEmpty) {
+      throw Exception('Item cart tidak ditemukan.');
+    }
+
+    final cartItem = CartItemModel.fromMap(cartRows.first);
+    final product = await getProductById(cartItem.productId);
+    if (product == null) {
+      throw Exception('Produk tidak ditemukan.');
+    }
+
+    if (newQuantity > product.stock) {
+      throw Exception('Stok produk tidak mencukupi.');
     }
     
     return await db.update(

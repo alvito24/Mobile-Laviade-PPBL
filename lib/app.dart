@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
 import 'data/preferences/preference_helper.dart';
-import 'navigation/main_navigation.dart';
+import 'screens/splash/splash_screen.dart';
 
 class LaviadeApp extends StatefulWidget {
   const LaviadeApp({super.key});
@@ -44,7 +44,7 @@ class _LaviadeAppState extends State<LaviadeApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
-      home: MainNavigation(onThemeChanged: _updateTheme),
+      home: SplashScreen(onThemeChanged: _updateTheme),
     );
   }
 }

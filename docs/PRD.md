@@ -1,104 +1,114 @@
 # PRD.md
-
 # Product Requirement Document
+# Laviade Studio Mobile — Local Commerce Simulation
+## Final Scope Assessment 2 + Tugas Besar
 
-## Laviade Studio Mobile — Local Catalog & Cart
+## Dokumen Control
+
+| Item | Keterangan |
+|---|---|
+| Nama project final | Laviade Studio Mobile — Local Commerce Simulation |
+| Nama baseline Assessment 2 | Laviade Studio Mobile — Local Catalog & Cart |
+| Brand | Laviade Studio, streetwear clothing brand |
+| Platform | Flutter mobile app, target Android |
+| Jenis aplikasi | Local-first mobile commerce simulation |
+| Scope | Assessment 2 + Tugas Besar |
+| Prinsip | Melanjutkan baseline Assessment 2, bukan rebuild dari nol |
+| Ground truth teknis | Source code real + Reconciliation Report |
+| Catatan | `design_handoff.md`, `UI_IMPLEMENTATION_TASKS.md`, `ANTIGRAVITY_TASK_PROMPTS.md`, dan `AGENTS.md final` dibuat setelah UI Stitch final |
 
 ---
 
 ## 1. Product Overview
 
-### Ringkasan Project
+**Laviade Studio Mobile — Local Commerce Simulation** adalah versi final gabungan dari baseline Assessment 2 **Laviade Studio Mobile — Local Catalog & Cart** dan scope Tugas Besar. Aplikasi ini adalah Flutter mobile app local-first untuk katalog produk streetwear Laviade, simulasi cart, CRUD lokal, preferensi user, wishlist lokal, order simulation lokal, product note/review lokal, statistik lokal, dan pemenuhan requirement akademik PPBL.
 
-Laviade Studio Mobile — Local Catalog & Cart adalah aplikasi mobile berbasis Flutter yang dibuat untuk menampilkan katalog produk streetwear Laviade dan simulasi belanja sederhana secara lokal. Pada Assessment 2, aplikasi ini tidak menggunakan backend, API, login online, maupun payment gateway. Seluruh data utama seperti produk, kategori, dan cart disimpan menggunakan SQLite, sedangkan preferensi pengguna disimpan menggunakan SharedPreferences.
+Assessment 2 menjadi baseline existing. Berdasarkan audit source code dan rekonsiliasi, baseline real yang harus dipertahankan adalah Product Catalog, Product Detail, Product CRUD, Category CRUD, Cart Item CRUD, Settings/Preferences, SQLite, SharedPreferences, Bottom Navigation Home/Cart/Manage/Settings, reusable widgets, local-first architecture, tanpa backend/API, tanpa login/register, tanpa checkout/payment real, dan tanpa Maps.
 
-Project ini merupakan rebuild dari konsep aplikasi mobile e-commerce Laviade sebelumnya, tetapi dengan implementasi yang disesuaikan dengan kebutuhan Assessment 2 mata kuliah PPBL. Fokus utama aplikasi ini adalah membuktikan penerapan penyimpanan lokal menggunakan SQLite dan SharedPreferences dalam bentuk aplikasi katalog dan cart sederhana.
-
-### Masalah Utama yang Diselesaikan
-
-Masalah utama yang diselesaikan adalah kebutuhan untuk membuat aplikasi mobile Laviade yang tetap memiliki konsep e-commerce, tetapi lebih sederhana dan sesuai dengan requirement Assessment 2. Aplikasi ini memungkinkan pengguna melihat katalog produk, mengelola data produk dan kategori, menambahkan produk ke cart, serta menyimpan preferensi aplikasi secara lokal.
-
-Dengan pendekatan local-first, aplikasi dapat berjalan tanpa koneksi server dan tetap dapat menunjukkan implementasi CRUD SQLite serta penyimpanan key-value menggunakan SharedPreferences secara jelas.
-
-### Target User
-
-Target user aplikasi ini terdiri dari:
-
-1. **Customer**
-   Pengguna yang melihat katalog produk, membuka detail produk, menambahkan produk ke cart, mengubah quantity cart, dan mengatur preferensi sederhana.
-
-2. **Pengelola Data Demo**
-   Pengguna yang mengelola data produk dan kategori untuk kebutuhan demo, pengujian CRUD, dan presentasi Assessment 2.
-
-Catatan: Pada Assessment 2, tidak ada sistem login dan tidak ada pemisahan role berbasis autentikasi. Perbedaan user hanya dibedakan berdasarkan menu atau fungsi yang digunakan di dalam aplikasi.
+Tugas Besar adalah extension yang menambahkan minimal 6 CRUD, minimal 6 key SharedPreferences untuk 3 anggota, custom widget per anggota, custom drawing atau gesture widget, chart/statistik lokal, dan Provider sebagai state management sederhana. Project tetap bukan full online marketplace, bukan e-commerce production, tidak menggunakan backend/API production, tidak menggunakan payment gateway real, dan tidak menggunakan Maps.
 
 ---
 
 ## 2. Background / Latar Belakang
 
-Laviade Studio sebelumnya memiliki konsep aplikasi mobile e-commerce yang terintegrasi dengan backend Laravel. Namun, pada Assessment 2 mata kuliah PPBL, fokus implementasi diarahkan pada penggunaan SQLite dan SharedPreferences. Oleh karena itu, aplikasi perlu dibuat ulang dengan pendekatan yang lebih sederhana, lokal, dan sesuai dengan materi yang diuji.
+Laviade Studio adalah brand streetwear clothing yang menjadi konteks produk aplikasi. Pada Assessment 2, aplikasi dibuat sebagai katalog mobile local-first dengan SQLite untuk data utama dan SharedPreferences untuk preferensi. SQLite digunakan karena produk, kategori, dan cart memiliki struktur dan relasi. SharedPreferences digunakan untuk data kecil berbasis key-value seperti `user_name`, `is_dark_mode`, kategori terakhir, sorting, view mode, dan waktu terakhir cart dibuka.
 
-Jika aplikasi tetap dibuat seperti full e-commerce online, maka scope project akan menjadi terlalu besar. Fitur seperti backend, login online, payment gateway, checkout real, dan integrasi server dapat membuat pengerjaan menjadi tidak realistis untuk Assessment 2. Selain itu, fitur yang terlalu kompleks dapat membuat fokus utama, yaitu implementasi SQLite dan SharedPreferences, menjadi kurang terlihat.
+Tugas Besar melanjutkan baseline existing karena source code real sudah cukup kuat: struktur Flutter rapi, SQLite helper tersedia, Preference helper tersedia, model utama tersedia, screen utama tersedia, dan fitur utama sudah menggunakan data lokal. Source code real dipakai sebagai ground truth karena ada beberapa hal yang belum sepenuhnya sama dengan dokumen lama, seperti `SplashScreen` belum menjadi initial screen, beberapa error state masih silent, validasi stok cart belum lengkap, `dummy_data.dart` masih tersisa, dan database version masih 1 tanpa `onUpgrade`.
 
-Dengan membuat aplikasi local catalog dan cart sederhana, project tetap mempertahankan identitas Laviade sebagai brand streetwear, tetapi implementasinya lebih realistis untuk dikerjakan oleh tim berisi 3 orang. Aplikasi ini juga dapat menjadi pondasi awal untuk dikembangkan lebih lanjut pada tugas besar.
+Scope dijaga realistis untuk project mahasiswa. Fitur tambahan dipilih karena memenuhi requirement akademik tanpa mengubah aplikasi menjadi marketplace production: wishlist lokal, order simulation lokal, product note/review lokal, chart/statistik lokal, Provider sederhana, dan custom drawing/gesture.
+
+Maps tidak digunakan karena tidak sesuai batasan project dan tidak dibutuhkan oleh local commerce simulation ini. Backend/payment production juga tidak digunakan agar fokus tetap pada local storage, CRUD, UI, state management, chart, dan demo akademik.
 
 ---
 
 ## 3. Goals
 
-### Tujuan Utama Project
+### 3.1 Goals dari sisi user
 
-Membangun aplikasi mobile Flutter sederhana untuk katalog produk dan simulasi cart Laviade dengan penyimpanan lokal menggunakan SQLite dan SharedPreferences.
-
-### Tujuan dari Sisi User
-
-1. User dapat melihat daftar produk Laviade.
+1. User dapat melihat katalog produk Laviade secara lokal.
 2. User dapat melihat detail produk.
-3. User dapat memilih kategori produk.
-4. User dapat menambahkan produk ke cart.
-5. User dapat mengubah quantity produk di cart.
-6. User dapat menghapus produk dari cart.
-7. User dapat melihat total harga sementara di cart.
-8. User dapat menyimpan preferensi aplikasi seperti nama, tema, kategori terakhir, sorting produk, tampilan katalog, dan waktu terakhir membuka cart.
+3. User dapat menambahkan produk ke cart dan mengatur quantity.
+4. User dapat menyimpan produk ke wishlist lokal.
+5. User dapat membuat simulasi order lokal dari cart.
+6. User dapat menulis catatan/review lokal terhadap produk.
+7. User dapat melihat statistik lokal sederhana.
+8. User dapat menyimpan preferensi seperti nama, tema, sorting, dan view mode.
 
-### Tujuan dari Sisi Sistem / Akademik
+### 3.2 Goals dari sisi sistem
 
-1. Sistem dapat menyimpan data produk, kategori, dan cart secara lokal menggunakan SQLite.
-2. Sistem dapat menjalankan operasi CRUD pada data produk dan kategori.
-3. Sistem dapat menjalankan operasi cart sederhana seperti tambah, baca, ubah quantity, dan hapus item.
-4. Sistem dapat menyimpan minimal 6 key SharedPreferences sesuai pembagian anggota kelompok.
-5. Sistem dapat berjalan tanpa backend dan tetap mempertahankan konsep aplikasi e-commerce sederhana.
-6. Sistem memiliki struktur yang mudah dipahami, mudah dijelaskan saat presentasi, dan tidak over-engineering.
-7. Project dapat menjadi pondasi untuk dikembangkan pada tugas besar.
+1. Menjaga data utama di SQLite.
+2. Menjaga preferensi di SharedPreferences.
+3. Menambahkan 3 entity CRUD baru tanpa merusak 3 CRUD Assessment 2.
+4. Menyediakan migration database dari version 1 ke version 2.
+5. Menggunakan Provider secara terbatas untuk state global sederhana.
+6. Menampilkan chart dari data SQLite lokal.
+7. Menyediakan reusable custom widgets dan custom drawing/gesture widget.
+
+### 3.3 Goals dari sisi akademik
+
+1. Memenuhi SQLite.
+2. Memenuhi SharedPreferences minimal 2 key per orang.
+3. Memenuhi minimal 6 CRUD.
+4. Memenuhi minimal 1 custom widget per orang.
+5. Memenuhi custom widget tambahan.
+6. Memenuhi custom drawing atau gesture tambahan.
+7. Memenuhi 3–5 library di luar SQLite.
+8. Tidak menggunakan Maps.
+9. Memudahkan presentasi dan demo.
+
+### 3.4 Goals maintainability
+
+1. Tidak rewrite besar fitur Assessment 2.
+2. Tidak menghapus tabel lama.
+3. Menambah fitur secara bertahap.
+4. Menjaga screen/widget tetap modular.
+5. Menjaga aplikasi tetap mudah dijelaskan oleh mahasiswa.
 
 ---
 
 ## 4. Non-Goals / Out of Scope
 
-Pada Assessment 2, beberapa fitur sengaja tidak dikerjakan agar project tetap realistis dan fokus pada requirement utama.
+Scope final ini tidak membuat:
 
-Fitur yang tidak termasuk scope Assessment 2:
+1. Backend online/API production.
+2. Login/register production.
+3. Authentication multi-role.
+4. Payment gateway real.
+5. Checkout production.
+6. Marketplace multi-seller.
+7. Push notification real.
+8. Maps dan semua library Maps.
+9. Admin dashboard enterprise.
+10. Upload image production.
+11. Shipping/address management.
+12. Chat/customer service.
+13. Cloud sync.
+14. Real courier tracking.
+15. Real financial transaction.
+16. Recommendation engine.
+17. Fitur kompleks yang mengarah ke aplikasi production.
 
-1. Integrasi backend Laravel.
-2. Login dan register online.
-3. Sistem autentikasi multi-role.
-4. Payment gateway.
-5. Checkout pembayaran real.
-6. Order history.
-7. Address management.
-8. Wishlist.
-9. Maps.
-10. Chart.
-11. Push notification.
-12. Upload gambar produk dari galeri.
-13. API online.
-14. Sinkronisasi data dengan server.
-15. Stock per size.
-16. Review dan rating produk.
-17. UI animasi kompleks.
-18. Arsitektur enterprise yang terlalu berat.
-
-Fitur-fitur tersebut dapat dipertimbangkan pada tahap tugas besar atau pengembangan lanjutan setelah Assessment 2 selesai.
+Order simulation hanya simulasi lokal. Wishlist dan product note/review juga lokal, bukan fitur online marketplace.
 
 ---
 
@@ -106,767 +116,482 @@ Fitur-fitur tersebut dapat dipertimbangkan pada tahap tugas besar atau pengemban
 
 ### 5.1 Customer
 
-Customer adalah pengguna utama aplikasi yang menggunakan aplikasi untuk melihat katalog produk dan melakukan simulasi belanja melalui cart.
+Customer menggunakan aplikasi untuk melihat katalog, membuka detail produk, menambahkan produk ke cart, mengelola cart, menyimpan wishlist, membuat simulasi order, melihat riwayat order lokal, membuat product note/review lokal, melihat statistik lokal, dan mengatur preferensi.
 
-Hak akses Customer:
+### 5.2 Pengelola Data Demo / Admin Lokal
 
-1. Melihat daftar produk.
-2. Melihat detail produk.
-3. Memilih kategori produk.
-4. Menambahkan produk ke cart.
-5. Melihat isi cart.
-6. Mengubah quantity produk di cart.
-7. Menghapus produk dari cart.
-8. Melihat total harga sementara.
-9. Mengatur preferensi sederhana di halaman Profile atau Settings.
+Pengelola Data Demo memakai menu Manage untuk Product CRUD, Category CRUD, dan akses ke fitur lokal tambahan seperti statistics/order jika desain final menempatkannya di Manage.
 
-### 5.2 Pengelola Data Demo
-
-Pengelola Data Demo adalah pengguna yang mengelola data produk dan kategori di dalam aplikasi untuk kebutuhan demo, assessment, dan pengujian CRUD SQLite.
-
-Hak akses Pengelola Data Demo:
-
-1. Melihat daftar kategori.
-2. Menambahkan kategori.
-3. Mengedit kategori.
-4. Menghapus kategori.
-5. Melihat daftar produk.
-6. Menambahkan produk.
-7. Mengedit produk.
-8. Menghapus produk.
-
-Catatan: Pengelola Data Demo bukan role autentikasi. Pada Assessment 2, fitur ini hanya disediakan melalui menu pengelolaan data tanpa login khusus.
+Tidak ada login production. Role dibedakan berdasarkan menu/fungsi aplikasi karena project fokus pada local storage dan requirement akademik.
 
 ---
 
-## 6. Core Features
+## 6. Baseline Assessment 2 yang Dipertahankan
 
-### 6.1 Product Catalog
-
-**Deskripsi Fitur:**
-Fitur ini menampilkan daftar produk Laviade yang tersimpan di SQLite. Produk ditampilkan dalam bentuk katalog sederhana yang berisi nama produk, harga, stok, kategori, dan gambar placeholder atau asset lokal.
-
-**User yang Menggunakan:**
-Customer
-
-**Tujuan Fitur:**
-Memudahkan user melihat produk Laviade yang tersedia di dalam aplikasi.
-
-**Alur Singkat:**
-User membuka halaman Home, sistem mengambil data produk dari SQLite, lalu menampilkan produk dalam bentuk list atau grid sederhana.
-
-**Prioritas:**
-Must Have
+| Fitur | Status | Data | Screen | File kode terkait | Catatan |
+|---|---|---|---|---|---|
+| Product Catalog | Existing real | `products`, `categories`, preferences | Home | `home_screen.dart`, `product_card.dart`, `category_chip.dart` | Error state load perlu diperkuat |
+| Product Detail | Existing real | `products`, `categories`, `cart_items` | Product Detail | `product_detail_screen.dart` | Add to Cart perlu validasi stok |
+| Product CRUD | Existing real | `products`, `categories` | Manage Product, Product Form | `manage_product_screen.dart`, `product_form_screen.dart`, `database_helper.dart` | Tidak boleh rusak |
+| Category CRUD | Existing real | `categories`, `products` | Manage Category, Category Form | `manage_category_screen.dart`, `category_form_screen.dart` | Delete conflict sudah ada |
+| Cart Item CRUD | Existing real | `cart_items`, `products` | Product Detail, Cart | `cart_screen.dart`, `database_helper.dart` | Stok validation perlu enhancement |
+| Settings/Preferences | Existing real | 6 key SharedPreferences | Settings | `settings_screen.dart`, `preference_helper.dart`, `app.dart` | Refresh antar tab perlu verifikasi manual |
+| SQLite | Existing real | `categories`, `products`, `cart_items` | Data layer | `database_helper.dart` | Version 1, belum ada `onUpgrade` |
+| SharedPreferences | Existing real | 6 key | Settings/Home/Cart/App | `preference_helper.dart` | Sudah cukup untuk requirement 6 key |
+| Navigation | Existing real | Tab state | Home/Cart/Manage/Settings | `main_navigation.dart`, `app_bottom_nav.dart` | Jangan tambah tab terlalu banyak |
+| UI Components | Existing real | Props/widget | Multiple | `lib/widgets/*` | Bisa dipakai untuk custom widget requirement |
+| Theme/design system | Existing real | Colors/theme | App | `app_theme.dart`, `app_colors.dart` | Pertahankan visual |
+| Seed data | Existing real | categories/products | App startup | `seed_data.dart` | Jangan duplicate seed |
 
 ---
 
-### 6.2 Product Detail
+## 7. Minor Fix Assessment 2 Sebelum Tugas Besar
 
-**Deskripsi Fitur:**
-Fitur ini menampilkan informasi detail dari produk yang dipilih user, seperti nama produk, kategori, harga, stok, deskripsi, dan tombol untuk menambahkan produk ke cart.
-
-**User yang Menggunakan:**
-Customer
-
-**Tujuan Fitur:**
-Memberikan informasi produk yang lebih jelas sebelum user menambahkan produk ke cart.
-
-**Alur Singkat:**
-User memilih salah satu produk dari katalog, lalu sistem menampilkan halaman detail produk.
-
-**Prioritas:**
-Should Have
+| Fix | Masalah | Dampak | Prioritas | File/screen | Wajib? |
+|---|---|---|---|---|---|
+| Aktifkan Splash initial | `SplashScreen` ada tapi app langsung ke `MainNavigation` | Demo tidak sesuai flow | Should Have | `app.dart`, `splash_screen.dart` | Disarankan |
+| Error state Home/Cart | Load error masih silent | UX kurang jelas | Should Have | `home_screen.dart`, `cart_screen.dart` | Disarankan |
+| Validasi stok cart | Quantity bisa melebihi stok | Order simulation tidak realistis | Must Have | `database_helper.dart`, `cart_screen.dart`, `product_detail_screen.dart` | Ya |
+| Sort/view preference | Home belum auto-save sort/view | Preference tidak konsisten | Should Have | `home_screen.dart`, `preference_helper.dart` | Disarankan |
+| Verifikasi `dummy_data.dart` | File dummy masih tersisa | Bisa membingungkan reviewer | Could Have | `lib/core/utils/dummy_data.dart` | Perlu verifikasi manual |
+| Migration plan | Database version 1 belum `onUpgrade` | Schema baru berisiko | Must Have | `database_helper.dart` | Ya sebelum tambah tabel |
 
 ---
 
-### 6.3 Product CRUD
+## 8. Final Feature Scope
 
-**Deskripsi Fitur:**
-Fitur ini memungkinkan Pengelola Data Demo untuk menambahkan, melihat, mengedit, dan menghapus data produk secara lokal menggunakan SQLite.
-
-**User yang Menggunakan:**
-Pengelola Data Demo
-
-**Tujuan Fitur:**
-Membuktikan implementasi CRUD SQLite pada data produk dan menyediakan data yang akan ditampilkan di katalog.
-
-**Alur Singkat:**
-Pengelola Data Demo membuka menu Manage Product, melihat daftar produk, lalu dapat menambah, mengedit, atau menghapus produk.
-
-**Prioritas:**
-Must Have
-
----
-
-### 6.4 Category CRUD
-
-**Deskripsi Fitur:**
-Fitur ini memungkinkan Pengelola Data Demo untuk menambahkan, melihat, mengedit, dan menghapus kategori produk secara lokal menggunakan SQLite.
-
-**User yang Menggunakan:**
-Pengelola Data Demo
-
-**Tujuan Fitur:**
-Membantu mengelompokkan produk berdasarkan kategori dan menunjukkan relasi sederhana antara kategori dan produk.
-
-**Alur Singkat:**
-Pengelola Data Demo membuka menu Manage Category, melihat daftar kategori, lalu dapat menambah, mengedit, atau menghapus kategori.
-
-**Prioritas:**
-Must Have
-
-**Catatan Aturan:**
-Kategori tidak dapat dihapus jika masih digunakan oleh produk.
+| Fitur | Deskripsi | User | Data | Requirement | Prioritas | Status |
+|---|---|---|---|---|---|---|
+| Splash Screen | Branding awal | Semua | Static | UI flow | Should Have | Existing, perlu initial |
+| Product Catalog | Katalog produk SQLite | Customer | `products`, `categories` | SQLite/UI | Must | Existing |
+| Product Detail | Detail produk + action | Customer | `products`, `cart_items`, `wishlist_items`, `product_notes` | SQLite/CRUD | Must | Enhanced |
+| Category CRUD | Kelola kategori | Admin Lokal | `categories` | CRUD 1 | Must | Existing |
+| Product CRUD | Kelola produk | Admin Lokal | `products` | CRUD 2 | Must | Existing |
+| Cart CRUD | Simulasi cart | Customer | `cart_items` | CRUD 3 | Must | Existing enhanced |
+| Wishlist CRUD | Favorit lokal | Customer | `wishlist_items` | CRUD 4 | Must | New TB |
+| Order Simulation CRUD | Simulasi order lokal | Customer | `orders`, `order_items` | CRUD 5 | Must | New TB |
+| Product Review/Note CRUD | Catatan lokal produk | Customer | `product_notes` | CRUD 6 | Must | New TB |
+| SharedPreferences Settings | Preferensi user | Customer | 6 key | SharedPreferences | Must | Existing |
+| Filter/Search/Sort | Filter/sort lokal | Customer | products/preferences | UI preference | Should | Enhanced |
+| Local Statistics/Chart | Statistik SQLite lokal | Customer/Admin | multiple tables | Chart library | Must | New TB |
+| Provider | State management ringan | Developer | global state | Library state management | Must | New TB |
+| Custom widgets | Widget reusable | Developer/User | widget props | Custom widget | Must | Existing + new |
+| Custom drawing/gesture | `OrderStatusStepper` | Customer | order status | Drawing/gesture | Must | New TB |
 
 ---
 
-### 6.5 Cart Management
+## 9. User Flow
 
-**Deskripsi Fitur:**
-Fitur ini memungkinkan Customer untuk menambahkan produk ke cart, melihat isi cart, mengubah quantity produk, menghapus item, dan melihat total harga sementara.
+### 9.1 Customer browsing flow
 
-**User yang Menggunakan:**
-Customer
+User membuka aplikasi, melihat Splash, masuk Home, sistem membaca produk/kategori dari SQLite, user memilih kategori/sort/view, lalu membuka Product Detail. Data yang dibaca: `products`, `categories`, dan beberapa SharedPreferences. Status: existing enhanced.
 
-**Tujuan Fitur:**
-Menyediakan simulasi belanja sederhana yang tetap sesuai dengan konsep aplikasi e-commerce Laviade.
+### 9.2 Product detail flow
 
-**Alur Singkat:**
-User membuka detail produk atau katalog, menambahkan produk ke cart, lalu membuka halaman cart untuk melihat dan mengelola produk yang dipilih.
+User membuka detail produk, melihat informasi produk, menekan Add to Cart, toggle Wishlist, atau membuka Product Note. Data: `products`, `cart_items`, `wishlist_items`, `product_notes`. Status: existing + new extension.
 
-**Prioritas:**
-Must Have
+### 9.3 Cart flow
 
-**Catatan Aturan:**
-Jika produk yang sama ditambahkan lagi ke cart, sistem akan menambah quantity produk tersebut, bukan membuat item cart baru.
+User menambahkan produk ke cart, sistem validasi stok, user membuka Cart, mengubah quantity, menghapus item, dan membuat simulasi order. Data: `cart_items`, `products`, `orders`, `order_items`. Status: existing enhanced.
 
----
+### 9.4 Wishlist flow
 
-### 6.6 SharedPreferences Settings
+User menekan wishlist toggle, sistem menyimpan ke `wishlist_items`, user membuka Wishlist, melihat produk favorit, membuka detail, atau menghapus wishlist item. Status: new.
 
-**Deskripsi Fitur:**
-Fitur ini menyimpan preferensi sederhana pengguna menggunakan SharedPreferences. Data yang disimpan berupa key-value dan bukan data utama aplikasi.
+### 9.5 Order simulation flow
 
-**User yang Menggunakan:**
-Customer
+User membuat order dari cart, sistem membuat `orders` dan `order_items`, user melihat Orders, membuka Order Detail, melihat `OrderStatusStepper`, update status, atau cancel/delete order. Status: new.
 
-**Tujuan Fitur:**
-Membuktikan penerapan SharedPreferences untuk menyimpan preferensi user secara lokal.
+### 9.6 Review/note flow
 
-**Alur Singkat:**
-User membuka halaman Profile atau Settings, mengubah preferensi, lalu sistem menyimpannya menggunakan SharedPreferences. Saat aplikasi dibuka kembali, preferensi tersebut tetap tersimpan.
+User membuka Product Detail, membuka notes, menambah note lokal, membaca list note, edit, dan delete note. Status: new.
 
-**Prioritas:**
-Must Have
+### 9.7 Local statistics flow
 
----
+User membuka Statistics, sistem membaca summary SQLite, menampilkan stat card dan chart. Jika data kosong, tampil empty chart state. Status: new.
 
-### 6.7 Product Filter
+### 9.8 Manage product/category flow
 
-**Deskripsi Fitur:**
-Fitur ini memungkinkan user memilih kategori produk di halaman katalog. Kategori terakhir yang dipilih disimpan menggunakan SharedPreferences.
+User membuka Manage, memilih Manage Product/Category, melakukan CRUD, data tersimpan di SQLite. Status: existing.
 
-**User yang Menggunakan:**
-Customer
+### 9.9 Settings/preferences flow
 
-**Tujuan Fitur:**
-Memudahkan user melihat produk berdasarkan kategori tertentu dan menunjukkan penggunaan SharedPreferences pada katalog.
-
-**Alur Singkat:**
-User memilih kategori pada halaman katalog, sistem menampilkan produk berdasarkan kategori tersebut, lalu menyimpan kategori terakhir yang dipilih.
-
-**Prioritas:**
-Should Have
+User membuka Settings, sistem load SharedPreferences, user mengubah preference, menyimpan, dan value persist setelah restart. Status: existing.
 
 ---
 
-### 6.8 Simple UI Preferences
+## 10. Data Requirements
 
-**Deskripsi Fitur:**
-Fitur ini memungkinkan user mengatur tampilan sederhana seperti light/dark mode dan mode tampilan katalog.
+### 10.1 SQLite entities
 
-**User yang Menggunakan:**
-Customer
+| Entity | Tujuan | Field utama | Relasi | Fitur | Status | Source code |
+|---|---|---|---|---|---|---|
+| `categories` | Kategori produk | `id`, `name`, timestamps | one-to-many `products` | Category CRUD, filter | Existing | Sudah ada |
+| `products` | Data produk | `id`, `category_id`, `name`, `price`, `stock`, `description`, `image_name`, timestamps | many-to-one `categories`; one-to-many cart/wishlist/order/note | Catalog, CRUD | Existing | Sudah ada |
+| `cart_items` | Item cart lokal | `id`, `product_id`, `quantity`, timestamps | many-to-one `products` | Cart CRUD | Existing | Sudah ada |
+| `wishlist_items` | Produk favorit | `id`, `product_id`, timestamps | many-to-one `products` | Wishlist CRUD | New | Perlu dibuat |
+| `orders` | Simulasi order | `id`, `order_code`, `status`, `total_price`, `total_items`, timestamps | one-to-many `order_items` | Order CRUD | New | Perlu dibuat |
+| `order_items` | Detail order | `id`, `order_id`, `product_id`, `product_name_snapshot`, `price_snapshot`, `quantity`, `subtotal`, `created_at` | many-to-one `orders` | Order Detail | New | Perlu dibuat |
+| `product_notes` | Note/review lokal | `id`, `product_id`, `note_text`, timestamps | many-to-one `products` | Product Note CRUD | New | Perlu dibuat |
 
-**Tujuan Fitur:**
-Memberikan personalisasi sederhana tanpa membuat aplikasi terlalu kompleks.
+### 10.2 SharedPreferences data
 
-**Alur Singkat:**
-User membuka halaman Settings, memilih preferensi tampilan, lalu sistem menyimpan preferensi menggunakan SharedPreferences.
+Tetap 6 key existing: `user_name`, `is_dark_mode`, `last_selected_category_id`, `product_sort_type`, `preferred_view_mode`, `cart_last_opened`.
 
-**Prioritas:**
-Should Have
+### 10.3 Seed data
 
----
+Seed existing kategori/produk dipertahankan. Seed untuk wishlist/order/note tidak wajib; lebih baik data terbentuk dari demo user agar alurnya terlihat.
 
-## 7. User Flow
+### 10.4 Temporary UI state
 
-### 7.1 Customer Flow
-
-1. User membuka aplikasi.
-2. Sistem menampilkan halaman Home berisi katalog produk.
-3. User memilih kategori produk.
-4. Sistem menampilkan produk berdasarkan kategori yang dipilih.
-5. User memilih salah satu produk.
-6. Sistem menampilkan detail produk.
-7. User menambahkan produk ke cart.
-8. Sistem menyimpan data cart ke SQLite.
-9. User membuka halaman Cart.
-10. Sistem menampilkan daftar produk di cart.
-11. User dapat mengubah quantity produk.
-12. User dapat menghapus produk dari cart.
-13. Sistem menghitung dan menampilkan total harga sementara.
-14. User membuka halaman Profile atau Settings.
-15. User mengubah preferensi sederhana.
-16. Sistem menyimpan preferensi menggunakan SharedPreferences.
-17. Saat aplikasi dibuka kembali, data SQLite dan SharedPreferences tetap tersimpan.
+Temporary state mencakup selected tab, selected category UI, form controllers, loading flag, error message, chart filter, dan selected order status. State sementara tidak disimpan ke database kecuali menjadi data utama.
 
 ---
 
-### 7.2 Pengelola Data Demo Flow
+## 11. SharedPreferences Requirements
 
-1. Pengelola Data Demo membuka menu Manage.
-2. Pengelola Data Demo memilih Manage Category.
-3. Sistem menampilkan daftar kategori dari SQLite.
-4. Pengelola Data Demo dapat menambah, mengedit, atau menghapus kategori.
-5. Pengelola Data Demo memilih Manage Product.
-6. Sistem menampilkan daftar produk dari SQLite.
-7. Pengelola Data Demo dapat menambah, mengedit, atau menghapus produk.
-8. Data produk dan kategori yang berhasil disimpan akan muncul di halaman katalog Customer.
+| Key | Fungsi | Tipe | Default | Screen | Penanggung jawab | Requirement | Status |
+|---|---|---|---|---|---|---|---|
+| `user_name` | Nama user | String | `Guest` | Settings, Home | Anggota 3 | 2 key/orang | Sudah ada |
+| `is_dark_mode` | Tema gelap | bool | false | App, Settings | Anggota 3 | 2 key/orang | Sudah ada |
+| `last_selected_category_id` | Kategori terakhir | int? | null/all | Home, Settings | Anggota 1 | 2 key/orang | Sudah ada |
+| `product_sort_type` | Sort produk | String | `default` | Home, Settings | Anggota 1 | 2 key/orang | Sudah ada, validasi perlu enhancement |
+| `preferred_view_mode` | Grid/list | String | `grid` | Home, Settings | Anggota 2 | 2 key/orang | Sudah ada |
+| `cart_last_opened` | Waktu cart dibuka | String ISO? | null | Cart, Settings | Anggota 2 | 2 key/orang | Sudah ada |
 
----
-
-### 7.3 Preferences Flow
-
-1. User membuka halaman Profile atau Settings.
-2. User mengisi atau mengubah nama.
-3. User mengubah tema aplikasi.
-4. User memilih kategori produk.
-5. User memilih sorting atau mode tampilan katalog.
-6. Sistem menyimpan data preferensi menggunakan SharedPreferences.
-7. User menutup aplikasi.
-8. Saat aplikasi dibuka kembali, preferensi yang pernah disimpan tetap digunakan.
+Tidak perlu key baru kecuali ada alasan kuat. Data utama Tugas Besar tetap di SQLite.
 
 ---
 
-## 8. Data Requirements
+## 12. CRUD Requirements
 
-### 8.1 Data yang Disimpan di SQLite
-
-Data utama aplikasi yang disimpan di SQLite:
-
-1. Data kategori.
-2. Data produk.
-3. Data cart.
-
-### 8.2 Data yang Disimpan di SharedPreferences
-
-Data preferensi user yang disimpan menggunakan SharedPreferences:
-
-1. Nama user.
-2. Status tema aplikasi.
-3. Kategori terakhir yang dipilih.
-4. Jenis sorting produk.
-5. Mode tampilan katalog.
-6. Waktu terakhir user membuka cart.
+| CRUD | Entity | Create | Read | Update | Delete | Screen | Status | Risiko |
+|---|---|---|---|---|---|---|---|---|
+| Category CRUD | `categories` | Add category | List/category by id | Edit category | Delete category | Manage Category/Form | Existing | Duplicate belum divalidasi |
+| Product CRUD | `products` | Add product | List/detail | Edit product | Delete product | Manage Product/Form | Existing | Delete berdampak ke cart |
+| Cart Item CRUD | `cart_items` | Add to cart | View cart | Update quantity | Delete/clear cart | Detail/Cart | Existing enhanced | Stok max perlu fix |
+| Wishlist CRUD | `wishlist_items` | Add wishlist | View wishlist | Toggle/refresh | Remove | Wishlist/Detail | New | Duplicate product |
+| Order Simulation CRUD | `orders` | Create order | Order list/detail | Update status | Delete/cancel | Cart/Orders/Detail | New | Jangan jadi payment real |
+| Product Note CRUD | `product_notes` | Add note | Read notes | Edit note | Delete note | Detail/Notes | New | Note kosong |
 
 ---
 
-### 8.3 Entitas SQLite
+## 13. Functional Requirements
 
-#### 1. categories
+### Catalog
 
-Data kategori digunakan untuk mengelompokkan produk.
+FR-001 Sistem harus dapat menampilkan produk dari SQLite.  
+FR-002 Sistem harus dapat menampilkan kategori dari SQLite.  
+FR-003 Sistem harus dapat memfilter produk berdasarkan kategori.  
+FR-004 Sistem harus dapat mengurutkan produk.  
+FR-005 Sistem harus dapat menampilkan grid/list sesuai preference.  
+FR-006 Sistem harus menampilkan empty/error/loading state.
 
-Atribut utama:
+### Product Detail
 
-* id
-* name
-* created_at
-* updated_at
+FR-007 Sistem harus dapat menampilkan detail produk berdasarkan `productId`.  
+FR-008 Sistem harus dapat menambahkan produk ke cart.  
+FR-009 Sistem harus mencegah Add to Cart jika melebihi stok.  
+FR-010 Sistem harus dapat toggle wishlist.  
+FR-011 Sistem harus dapat membuka product notes.
 
-#### 2. products
+### Cart
 
-Data produk digunakan untuk menyimpan informasi produk Laviade.
+FR-012 Sistem harus dapat create/read/update/delete cart item.  
+FR-013 Sistem harus menghitung subtotal dan total.  
+FR-014 Sistem harus menyimpan `cart_last_opened`.  
+FR-015 Sistem harus dapat membuat order simulation dari cart.  
 
-Atribut utama:
+### Wishlist
 
-* id
-* category_id
-* name
-* price
-* stock
-* description
-* image_name
-* created_at
-* updated_at
+FR-016 Sistem harus dapat menambah produk ke wishlist.  
+FR-017 Sistem harus dapat menampilkan wishlist.  
+FR-018 Sistem harus mencegah duplikasi wishlist.  
+FR-019 Sistem harus dapat menghapus wishlist item.
 
-#### 3. cart_items
+### Order Simulation
 
-Data cart digunakan untuk menyimpan produk yang dipilih user.
+FR-020 Sistem harus dapat membuat order dari cart.  
+FR-021 Sistem harus menyimpan snapshot nama/harga produk.  
+FR-022 Sistem harus dapat menampilkan daftar order.  
+FR-023 Sistem harus dapat menampilkan detail order.  
+FR-024 Sistem harus dapat update status order lokal.  
+FR-025 Sistem harus dapat cancel/delete order.
 
-Atribut utama:
+### Product Note/Review
 
-* id
-* product_id
-* quantity
-* created_at
-* updated_at
+FR-026 Sistem harus dapat menambah note lokal produk.  
+FR-027 Sistem harus dapat membaca note per produk.  
+FR-028 Sistem harus dapat mengedit note.  
+FR-029 Sistem harus dapat menghapus note.  
+FR-030 Sistem harus memvalidasi note tidak kosong.
 
----
+### Product Management
 
-### 8.4 Relasi Antar Data
+FR-031 Sistem harus dapat Product CRUD.  
+FR-032 Sistem harus memvalidasi nama, kategori, harga, dan stok.
 
-1. Satu kategori dapat memiliki banyak produk.
-2. Satu produk hanya berada dalam satu kategori.
-3. Satu produk dapat ditambahkan ke cart.
-4. Cart item menyimpan referensi ke produk melalui product_id.
-5. SharedPreferences tidak memiliki relasi langsung dengan SQLite karena hanya digunakan untuk menyimpan preferensi sederhana.
+### Category Management
 
----
+FR-033 Sistem harus dapat Category CRUD.  
+FR-034 Sistem harus menolak delete category jika masih digunakan produk.
 
-### 8.5 SharedPreferences Key
+### Statistics/Chart
 
-Minimal 6 key SharedPreferences yang digunakan:
+FR-035 Sistem harus dapat menampilkan statistik lokal.  
+FR-036 Sistem harus dapat menampilkan chart produk per kategori.  
+FR-037 Sistem harus menampilkan empty chart jika data kosong.
 
-| No | Key                       | Tipe Data      | Fungsi                                                   |
-| -- | ------------------------- | -------------- | -------------------------------------------------------- |
-| 1  | user_name                 | String         | Menyimpan nama user                                      |
-| 2  | is_dark_mode              | Boolean        | Menyimpan status tema aplikasi                           |
-| 3  | last_selected_category_id | Integer/String | Menyimpan kategori terakhir yang dipilih                 |
-| 4  | product_sort_type         | String         | Menyimpan jenis sorting produk                           |
-| 5  | preferred_view_mode       | String         | Menyimpan mode tampilan katalog, misalnya list atau grid |
-| 6  | cart_last_opened          | String         | Menyimpan waktu terakhir halaman cart dibuka             |
+### Preferences
 
----
+FR-038 Sistem harus dapat save/load 6 key SharedPreferences.  
+FR-039 Sistem harus menampilkan default value jika key belum ada.
 
-### 8.6 Pembagian Key SharedPreferences per Anggota
+### Custom Widget
 
-Karena kelompok terdiri dari 3 orang dan setiap orang minimal memiliki 2 key SharedPreferences, pembagian key dirancang sebagai berikut:
+FR-040 Sistem harus memiliki minimal 1 custom widget per anggota.  
+FR-041 Custom widget harus reusable dan memiliki props.
 
-| Anggota   | Key 1                     | Key 2             | Tanggung Jawab Umum       |
-| --------- | ------------------------- | ----------------- | ------------------------- |
-| Anggota 1 | last_selected_category_id | product_sort_type | Katalog produk dan filter |
-| Anggota 2 | preferred_view_mode       | cart_last_opened  | Tampilan katalog dan cart |
-| Anggota 3 | user_name                 | is_dark_mode      | Profile dan settings      |
+### Custom Drawing/Gesture
 
----
+FR-042 Sistem harus memiliki custom drawing atau gesture tambahan.  
+FR-043 Widget custom drawing/gesture harus dipakai dalam flow nyata.
 
-## 9. Functional Requirements
+### Local Storage
 
-1. Sistem harus dapat menampilkan daftar produk dari SQLite.
-2. Sistem harus dapat menampilkan detail produk.
-3. Sistem harus dapat menampilkan daftar kategori dari SQLite.
-4. Sistem harus dapat memfilter produk berdasarkan kategori.
-5. Sistem harus dapat menambahkan produk baru ke SQLite.
-6. Sistem harus dapat mengedit data produk.
-7. Sistem harus dapat menghapus data produk.
-8. Sistem harus dapat menambahkan kategori baru ke SQLite.
-9. Sistem harus dapat mengedit data kategori.
-10. Sistem harus dapat menghapus data kategori.
-11. Sistem harus dapat mencegah penghapusan kategori yang masih digunakan oleh produk.
-12. Sistem harus dapat menambahkan produk ke cart.
-13. Sistem harus dapat menampilkan daftar produk di cart.
-14. Sistem harus dapat mengubah quantity produk di cart.
-15. Sistem harus dapat menghapus item dari cart.
-16. Sistem harus dapat menghitung total harga sementara di cart.
-17. Sistem harus dapat menambahkan quantity jika produk yang sama ditambahkan lagi ke cart.
-18. Sistem harus dapat menyimpan nama user menggunakan SharedPreferences.
-19. Sistem harus dapat menyimpan status tema aplikasi menggunakan SharedPreferences.
-20. Sistem harus dapat menyimpan kategori terakhir yang dipilih menggunakan SharedPreferences.
-21. Sistem harus dapat menyimpan jenis sorting produk menggunakan SharedPreferences.
-22. Sistem harus dapat menyimpan mode tampilan katalog menggunakan SharedPreferences.
-23. Sistem harus dapat menyimpan waktu terakhir halaman cart dibuka menggunakan SharedPreferences.
-24. Sistem harus dapat memuat kembali data SQLite saat aplikasi dibuka ulang.
-25. Sistem harus dapat memuat kembali data SharedPreferences saat aplikasi dibuka ulang.
-26. Sistem harus dapat menampilkan empty state jika data produk, kategori, atau cart kosong.
-27. Sistem harus dapat memberikan validasi sederhana pada form produk dan kategori.
-28. Sistem harus dapat mencegah input harga, stok, dan quantity bernilai negatif.
-29. Sistem harus dapat menampilkan pesan sederhana ketika data berhasil ditambah, diubah, atau dihapus.
+FR-044 Data utama harus tersimpan di SQLite.  
+FR-045 Preferensi harus tersimpan di SharedPreferences.  
+FR-046 Produk/cart/order/wishlist/note tidak boleh disimpan di SharedPreferences.
+
+### Provider
+
+FR-047 Sistem harus memakai Provider untuk state global sederhana.  
+FR-048 Provider tidak boleh menggantikan semua state lokal secara berlebihan.
+
+### Regression Safety
+
+FR-049 Fitur Assessment 2 tidak boleh rusak.  
+FR-050 Sistem tidak boleh memakai Maps/backend/payment production.
 
 ---
 
-## 10. Non-Functional Requirements
+## 14. Non-Functional Requirements
 
-### 10.1 Usability
-
-1. Aplikasi harus mudah digunakan oleh user tanpa alur yang rumit.
-2. Navigasi utama harus sederhana dan mudah dipahami.
-3. Tampilan katalog harus fokus pada informasi produk.
-4. Form input produk dan kategori harus jelas.
-5. Pesan validasi harus mudah dipahami.
-
-### 10.2 Performance
-
-1. Aplikasi harus dapat menampilkan data lokal dalam waktu yang wajar.
-2. Operasi tambah, baca, ubah, dan hapus data SQLite harus berjalan lancar untuk data demo dalam jumlah kecil.
-3. Aplikasi tidak boleh menjalankan proses berat yang tidak diperlukan pada Assessment 2.
-
-### 10.3 Security Dasar
-
-1. Aplikasi tidak menyimpan password, token, atau data sensitif.
-2. SharedPreferences hanya digunakan untuk menyimpan preferensi sederhana.
-3. Input harga, stok, dan quantity harus divalidasi agar tidak bernilai negatif.
-4. Input nama produk dan kategori tidak boleh kosong.
-
-### 10.4 Maintainability
-
-1. Struktur project harus mudah dipahami oleh anggota tim.
-2. Logic database sebaiknya dipisahkan dari tampilan.
-3. File screen, model, database helper, dan widget sebaiknya dipisahkan secara sederhana.
-4. Penamaan file, class, dan variabel harus jelas.
-5. Project tidak menambahkan library yang tidak dibutuhkan untuk Assessment 2.
-
-### 10.5 Responsiveness
-
-1. Tampilan aplikasi harus nyaman digunakan pada layar mobile.
-2. Button, card, dan input harus memiliki ukuran yang mudah ditekan.
-3. Layout tidak boleh overflow pada ukuran layar umum Android.
-4. Halaman katalog, manage, cart, dan settings harus tetap terbaca dengan baik.
-
-### 10.6 Reliability
-
-1. Data produk, kategori, dan cart harus tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-2. Data SharedPreferences harus tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-3. Aplikasi tidak boleh crash saat data kosong.
-4. Aplikasi harus tetap dapat digunakan meskipun belum ada produk atau kategori yang tersimpan.
+1. UI harus mudah dipakai dan dipresentasikan.
+2. Query SQLite harus cukup ringan untuk data demo.
+3. Data SQLite dan SharedPreferences harus persist setelah restart.
+4. Kode harus modular: model, helper, provider, screen, widget.
+5. Desain harus konsisten dengan A2.
+6. Semua screen utama harus mobile responsive.
+7. Button/tap target harus nyaman.
+8. Provider digunakan secara sederhana.
+9. Chart tidak boleh terlalu kompleks.
+10. Demo harus berjalan tanpa internet.
+11. Setiap fitur Must Have harus punya manual test.
+12. Semua perubahan harus menjaga regression safety A2.
 
 ---
 
-## 11. Acceptance Criteria
+## 15. UI/UX Requirements
 
-### 11.1 Kriteria Project Dianggap Selesai
+Design final mempertahankan style A2: clean, bold, minimal, monochrome, streetwear-inspired, mobile-first, product-focused, dan tidak generic. Screen baru harus mengikuti design system lama.
 
-Project Assessment 2 dianggap selesai jika:
+Screen existing dipertahankan: Splash, Home, Product Detail, Cart, Manage, Manage Product, Product Form, Manage Category, Category Form, Settings.
 
-1. Aplikasi dapat dijalankan di emulator atau perangkat Android.
-2. Aplikasi memiliki katalog produk berbasis data SQLite.
-3. Aplikasi memiliki CRUD produk.
-4. Aplikasi memiliki CRUD kategori.
-5. Aplikasi memiliki cart sederhana.
-6. Aplikasi dapat menyimpan dan membaca data dari SQLite.
-7. Aplikasi dapat menyimpan minimal 6 key SharedPreferences.
-8. Setiap anggota memiliki minimal 2 key SharedPreferences yang dapat dijelaskan.
-9. Data SQLite tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-10. Data SharedPreferences tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-11. UI sederhana, rapi, dan tidak over-engineering.
-12. Setiap fitur utama dapat didemokan dan dijelaskan saat presentasi.
+Screen baru: Wishlist, Orders/Order History, Order Detail, Product Notes, Statistics/Chart.
+
+State wajib: default, loading, empty, error, success, validation, delete confirmation.
+
+Dilarang: Maps UI, payment UI, shipping/address UI, login/register production, dashboard enterprise, chart terlalu ramai, marketplace copywriting.
+
+`design_handoff.md` final dibuat setelah hasil UI Google Stitch final selesai.
 
 ---
 
-### 11.2 Acceptance Criteria Product Catalog
+## 16. Library Requirements
 
-1. User dapat melihat daftar produk.
-2. Produk menampilkan nama, harga, stok, kategori, dan gambar sederhana.
-3. User dapat memilih kategori produk.
-4. Produk dapat ditampilkan berdasarkan kategori yang dipilih.
-5. Jika tidak ada produk, sistem menampilkan empty state.
+| Library | Tujuan | Fitur | Alasan | Risiko | Alternatif |
+|---|---|---|---|---|---|
+| `shared_preferences` | Key-value preference | Settings/theme/home prefs | Sudah ada dan wajib | Disalahgunakan untuk data utama | Tidak perlu alternatif |
+| `provider` | State management | Theme/cart/wishlist/order/statistics | Sederhana dan mudah dijelaskan | Over-engineering | `setState` lokal |
+| `fl_chart` | Chart lokal | Statistics | Memenuhi chart requirement | UI ramai/version conflict | Stat cards jika fallback |
+| `intl` | Format tanggal/harga | Currency/date/order | Sudah ada di source code | Version conflict | Formatter manual |
 
----
-
-### 11.3 Acceptance Criteria Product Detail
-
-1. User dapat membuka detail produk dari katalog.
-2. Detail produk menampilkan nama, kategori, harga, stok, dan deskripsi.
-3. User dapat menambahkan produk ke cart dari halaman detail.
+Maps library dilarang: `google_maps_flutter`, `flutter_map`, `mapbox_maps_flutter`, dan library Maps lain.
 
 ---
 
-### 11.4 Acceptance Criteria Product CRUD
+## 17. Custom Widget Requirements
 
-1. Pengelola Data Demo dapat menambahkan produk baru.
-2. Pengelola Data Demo dapat melihat daftar produk.
-3. Pengelola Data Demo dapat mengedit produk.
-4. Pengelola Data Demo dapat menghapus produk.
-5. Produk yang ditambahkan tersimpan di SQLite.
-6. Produk yang diedit tampil sesuai perubahan terbaru.
-7. Produk yang dihapus tidak muncul lagi di katalog.
-8. Sistem melakukan validasi agar nama produk tidak kosong.
-9. Sistem melakukan validasi agar harga dan stok tidak bernilai negatif.
-
----
-
-### 11.5 Acceptance Criteria Category CRUD
-
-1. Pengelola Data Demo dapat menambahkan kategori baru.
-2. Pengelola Data Demo dapat melihat daftar kategori.
-3. Pengelola Data Demo dapat mengedit kategori.
-4. Pengelola Data Demo dapat menghapus kategori.
-5. Kategori yang ditambahkan tersimpan di SQLite.
-6. Kategori dapat digunakan pada data produk.
-7. Kategori tidak dapat dihapus jika masih digunakan oleh produk.
-8. Sistem melakukan validasi agar nama kategori tidak kosong.
+| Anggota | Widget | Tujuan | Props/data | Screen | Status |
+|---|---|---|---|---|---|
+| Anggota 1 | `ProductCard` | Card produk | name, category, price, stock, image, onTap | Home | Existing |
+| Anggota 1 | `WishlistToggleButton` | Toggle wishlist | productId, isActive, callback | Home/Detail | New |
+| Anggota 2 | `CartItemTile` | Item cart | product, price, quantity, callbacks | Cart | Existing |
+| Anggota 2 | `QuantityControl` | Plus/minus | quantity, callbacks | Cart | Existing |
+| Anggota 2 | `OrderStatusStepper` | Status order custom drawing | status, steps | Order Detail | New |
+| Anggota 3 | `PreferenceSelect` | Dropdown preference | label, options, value | Settings | Existing |
+| Anggota 3 | `SettingTile` | Row setting | title, subtitle, trailing | Settings | Existing |
+| Anggota 3 | `StatCard` | Statistik summary | title, value, caption | Statistics | New |
 
 ---
 
-### 11.6 Acceptance Criteria Cart Management
+## 18. Custom Drawing / Gesture Requirement
 
-1. User dapat menambahkan produk ke cart.
-2. User dapat melihat daftar produk di cart.
-3. User dapat mengubah quantity produk di cart.
-4. User dapat menghapus item dari cart.
-5. Sistem dapat menghitung total harga sementara.
-6. Jika produk yang sama ditambahkan lagi, quantity produk bertambah.
-7. Cart tetap tersimpan selama belum dihapus oleh user.
-8. Sistem menampilkan empty state jika cart kosong.
-9. Sistem mencegah quantity bernilai negatif atau nol saat update cart.
+Pilihan utama: **CustomPaint `OrderStatusStepper`** untuk order simulation.
 
----
+Konsep: stepper visual dengan lingkaran, garis penghubung, label status, dan active step.  
+Screen: Order Detail.  
+Alasan: relevan dengan order simulation, tidak butuh dependency, jelas memenuhi custom drawing, dan mudah dijelaskan saat presentasi.  
+Risiko: jika terlalu kompleks, batasi ke 4 step sederhana.
 
-### 11.7 Acceptance Criteria SharedPreferences
-
-1. Sistem dapat menyimpan key `user_name`.
-2. Sistem dapat menyimpan key `is_dark_mode`.
-3. Sistem dapat menyimpan key `last_selected_category_id`.
-4. Sistem dapat menyimpan key `product_sort_type`.
-5. Sistem dapat menyimpan key `preferred_view_mode`.
-6. Sistem dapat menyimpan key `cart_last_opened`.
-7. Data SharedPreferences tetap tersimpan setelah aplikasi ditutup dan dibuka kembali.
-8. Setiap key memiliki fungsi yang dapat didemokan saat presentasi.
-9. Setiap anggota dapat menjelaskan minimal 2 key SharedPreferences yang menjadi tanggung jawabnya.
+Alternatif jika CustomPaint gagal: `SwipeActionTile` untuk cart/wishlist. Namun CustomPaint tetap rekomendasi utama.
 
 ---
 
-## 12. Assumptions
+## 19. Acceptance Criteria
 
-1. Aplikasi dibuat untuk kebutuhan Assessment 2, bukan untuk transaksi real.
-2. Aplikasi tidak menggunakan backend.
-3. Aplikasi tidak menggunakan login dan register.
-4. Aplikasi tidak menggunakan payment gateway.
-5. Data produk, kategori, dan cart disimpan secara lokal menggunakan SQLite.
-6. Data preferensi disimpan menggunakan SharedPreferences.
-7. Gambar produk menggunakan asset lokal atau placeholder sederhana.
-8. Jumlah data demo tidak terlalu besar.
-9. Aplikasi dikembangkan oleh kelompok berisi 3 orang.
-10. Setiap anggota bertanggung jawab pada bagian fitur dan key SharedPreferences tertentu.
-11. Role Pengelola Data Demo tidak memerlukan autentikasi.
-12. Project Assessment 2 akan menjadi pondasi untuk pengembangan tugas besar.
-13. UI dibuat sederhana agar mudah dikembangkan, diuji, dan dijelaskan saat presentasi.
+### Project final
 
----
+1. App berjalan di Android.
+2. Fitur A2 tetap berjalan.
+3. Wishlist, Order Simulation, Product Note, Statistics tersedia.
+4. Tidak ada Maps/backend/payment.
+5. SQLite dan SharedPreferences bisa didemokan.
+6. Minimal 6 CRUD berjalan.
+7. Provider dan chart digunakan.
+8. Custom widget per anggota tersedia.
+9. Custom drawing/gesture tersedia.
 
-## 13. Risks
+### SQLite
 
-### 13.1 Risiko Teknis
+1. Tabel lama tetap ada.
+2. Tabel baru dibuat via migration.
+3. CRUD 6 entity berjalan.
+4. Data persist setelah restart.
 
-1. Struktur database SQLite kurang rapi sehingga sulit dikembangkan ke tugas besar.
-2. Relasi antara produk, kategori, dan cart tidak dirancang dengan benar.
-3. SharedPreferences digunakan untuk data yang seharusnya disimpan di SQLite.
-4. Operasi CRUD tidak berjalan konsisten.
-5. Data tidak tersimpan setelah aplikasi ditutup karena kesalahan implementasi local storage.
-6. Layout mengalami overflow pada ukuran layar tertentu.
-7. Validasi input tidak berjalan dengan baik.
-8. Cart menghasilkan data duplikat jika produk yang sama ditambahkan berulang kali tanpa pengecekan.
+### SharedPreferences
 
-### 13.2 Risiko Scope
+1. 6 key bisa save/load.
+2. Setiap anggota bisa menjelaskan 2 key.
+3. Value persist setelah restart.
 
-1. Project menjadi terlalu besar jika fitur lama dari aplikasi backend dipaksakan masuk.
-2. Fitur seperti login, backend, payment, maps, chart, wishlist, dan order history dapat membuat project keluar dari fokus Assessment 2.
-3. Terlalu banyak halaman dapat membuat pengerjaan tidak selesai tepat waktu.
-4. UI yang terlalu kompleks dapat mengurangi fokus pada SQLite dan SharedPreferences.
+### UI/UX
 
-### 13.3 Risiko Waktu
+1. Style A2 konsisten.
+2. Screen baru punya state.
+3. Tidak ada UI out of scope.
+4. Chart sederhana dan jelas.
 
-1. Tim memiliki waktu terbatas untuk membuat, menguji, dan mempresentasikan aplikasi.
-2. Integrasi antar fitur anggota dapat memakan waktu jika pembagian kerja tidak jelas.
-3. Debugging SQLite dapat memakan waktu jika struktur database tidak dirancang sejak awal.
-4. Perubahan requirement mendadak dapat mengganggu pengerjaan.
+### Regression A2
 
-### 13.4 Risiko Pemahaman Tim
-
-1. Anggota tim bisa memiliki pemahaman berbeda tentang scope project.
-2. Role Pengelola Data Demo dapat disalahpahami sebagai admin dengan login.
-3. SharedPreferences dapat disalahpahami sebagai tempat menyimpan seluruh data aplikasi.
-4. Cart dapat melebar menjadi checkout real jika tidak dibatasi.
-5. Project bisa terlihat terlalu sederhana jika tidak dijelaskan bahwa fokusnya adalah implementasi local storage.
+1. Home tetap tampil.
+2. Product Detail tetap tampil.
+3. Cart tetap bekerja.
+4. Product CRUD tetap bekerja.
+5. Category CRUD tetap bekerja.
+6. Settings tetap bekerja.
 
 ---
 
-## 14. MVP Scope
+## 20. Assumptions
 
-### 14.1 MVP Assessment 2
-
-Versi MVP Assessment 2 adalah aplikasi mobile Flutter sederhana yang memiliki katalog produk lokal, pengelolaan produk dan kategori, cart sederhana, serta penyimpanan preferensi user.
-
-### 14.2 Fitur MVP
-
-1. Home / Product Catalog.
-2. Product Detail sederhana.
-3. Product CRUD.
-4. Category CRUD.
-5. Cart Management.
-6. Profile / Settings.
-7. SharedPreferences untuk minimal 6 key:
-
-   * user_name
-   * is_dark_mode
-   * last_selected_category_id
-   * product_sort_type
-   * preferred_view_mode
-   * cart_last_opened
-
-### 14.3 Data MVP
-
-SQLite:
-
-1. categories
-2. products
-3. cart_items
-
-SharedPreferences:
-
-1. user_name
-2. is_dark_mode
-3. last_selected_category_id
-4. product_sort_type
-5. preferred_view_mode
-6. cart_last_opened
-
-### 14.4 Batasan MVP
-
-1. Tidak menggunakan backend.
-2. Tidak menggunakan login/register.
-3. Tidak menggunakan payment gateway.
-4. Tidak menggunakan checkout real.
-5. Tidak menggunakan order history.
-6. Tidak menggunakan address.
-7. Tidak menggunakan wishlist.
-8. Tidak menggunakan maps.
-9. Tidak menggunakan chart.
-10. Tidak menggunakan upload gambar.
-11. Tidak membuat sistem role berbasis autentikasi.
-12. Tidak menggunakan UI animasi kompleks.
-
-### 14.5 Fokus MVP
-
-Fokus MVP adalah memastikan aplikasi dapat:
-
-1. Menyimpan data produk, kategori, dan cart menggunakan SQLite.
-2. Menampilkan data dari SQLite ke UI.
-3. Melakukan operasi CRUD pada produk dan kategori.
-4. Melakukan operasi cart sederhana.
-5. Menyimpan dan membaca preferensi user menggunakan SharedPreferences.
-6. Menyediakan flow e-commerce sederhana yang mudah dipahami.
-7. Menjadi pondasi yang rapi untuk dikembangkan pada tugas besar.
+1. Source code audit terakhir adalah ground truth.
+2. Database baseline version 1.
+3. Provider dan fl_chart belum ada.
+4. SharedPreferences 6 key sudah ada.
+5. Maps tidak digunakan.
+6. Tim terdiri dari 3 orang.
+7. Tugas Besar menghitung 6 CRUD berdasarkan entity/module CRUD.
+8. Ada hal yang masih perlu verifikasi manual: usage `dummy_data.dart`, refresh preference dengan IndexedStack, dan kondisi source code terbaru jika sudah berubah setelah audit.
 
 ---
 
-## 15. Prioritas Pengerjaan
+## 21. Risks
 
-### Tahap 1 — Database Foundation
-
-1. Membuat tabel categories.
-2. Membuat tabel products.
-3. Membuat tabel cart_items.
-4. Membuat database helper.
-5. Menguji operasi insert, read, update, dan delete secara sederhana.
-
-### Tahap 2 — Product & Category Management
-
-1. Membuat halaman Manage Category.
-2. Membuat halaman Manage Product.
-3. Membuat form input kategori.
-4. Membuat form input produk.
-5. Menambahkan validasi sederhana.
-
-### Tahap 3 — Product Catalog
-
-1. Menampilkan produk dari SQLite.
-2. Menampilkan kategori.
-3. Menambahkan filter kategori.
-4. Menambahkan detail produk sederhana.
-
-### Tahap 4 — Cart
-
-1. Menambahkan produk ke cart.
-2. Menampilkan isi cart.
-3. Mengubah quantity cart.
-4. Menghapus item cart.
-5. Menghitung total harga sementara.
-
-### Tahap 5 — SharedPreferences
-
-1. Membuat halaman Profile atau Settings.
-2. Menyimpan key `user_name`.
-3. Menyimpan key `is_dark_mode`.
-4. Menyimpan key `last_selected_category_id`.
-5. Menyimpan key `product_sort_type`.
-6. Menyimpan key `preferred_view_mode`.
-7. Menyimpan key `cart_last_opened`.
-8. Memastikan semua key tetap tersimpan setelah aplikasi dibuka ulang.
-
-### Tahap 6 — UI Cleanup dan Testing
-
-1. Merapikan layout utama.
-2. Menambahkan empty state.
-3. Menambahkan pesan sukses atau error sederhana.
-4. Menguji flow dari katalog sampai cart.
-5. Menguji CRUD produk dan kategori.
-6. Menguji persistence SQLite.
-7. Menguji persistence SharedPreferences.
+| Risiko | Dampak | Mitigasi |
+|---|---|---|
+| Migration gagal | Data lama hilang | Backup, version 2, `onUpgrade`, no drop |
+| Fitur A2 rusak | Demo gagal | Regression test |
+| Provider berlebihan | Kode sulit dijelaskan | Batasi Provider |
+| Chart terlalu kompleks | UI ramai | Chart sederhana |
+| CustomPaint sulit | Requirement tertunda | Stepper sederhana |
+| Stok cart invalid | Order tidak realistis | Validasi stok |
+| Preference refresh lambat | UI tidak update | Provider/refresh callback |
+| Maps masuk | Melanggar constraint | Forbidden di AGENTS |
+| Scope creep | Project melebar | Tegaskan local-first |
 
 ---
 
-## 16. Pembagian Kerja Tim
+## 22. MVP Final Scope
 
-### Anggota 1 — Product & Category
+### Must Have
 
-Tanggung jawab:
+1. A2 baseline aman.
+2. Migration database.
+3. Wishlist CRUD.
+4. Order Simulation CRUD.
+5. Product Note CRUD.
+6. Statistics/Chart.
+7. Provider sederhana.
+8. SharedPreferences 6 key.
+9. Custom widget per anggota.
+10. CustomPaint OrderStatusStepper.
+11. No Maps.
 
-1. Product CRUD.
-2. Category CRUD.
-3. Product Catalog.
-4. Filter kategori.
+### Should Have
 
-SharedPreferences:
+1. Splash initial.
+2. Error state Home/Cart.
+3. Auto-save sort/view.
+4. Route helper sederhana.
+5. Duplicate validation.
 
-1. `last_selected_category_id`
-2. `product_sort_type`
+### Could Have
 
-### Anggota 2 — Cart & Catalog View
+1. Swipe action.
+2. Local reset data.
+3. Export summary.
+4. Theme polish.
 
-Tanggung jawab:
+### Drop/Avoid
 
-1. Add to cart.
-2. Read cart.
-3. Update quantity cart.
-4. Delete cart item.
-5. Total harga sementara.
-6. Mode tampilan katalog.
-
-SharedPreferences:
-
-1. `preferred_view_mode`
-2. `cart_last_opened`
-
-### Anggota 3 — Profile & Settings
-
-Tanggung jawab:
-
-1. Profile / Settings page.
-2. Menyimpan nama user.
-3. Theme preference.
-4. Load dan save SharedPreferences.
-5. UI cleanup sederhana.
-
-SharedPreferences:
-
-1. `user_name`
-2. `is_dark_mode`
+Maps, backend/API production, payment gateway, checkout real, shipping/address, push notification, upload image, marketplace multi-seller, dashboard enterprise.
 
 ---
 
-## 17. Final Scope Statement
+## 23. Prioritas Pengerjaan
 
-Assessment 2 Laviade Studio Mobile difokuskan pada pembuatan aplikasi Flutter local-first yang sederhana dan mudah dijelaskan. Aplikasi ini menyediakan katalog produk, pengelolaan produk dan kategori, cart sederhana, serta penyimpanan preferensi pengguna. Data utama disimpan menggunakan SQLite, sedangkan preferensi user disimpan menggunakan SharedPreferences.
+1. Backup baseline A2.
+2. Stabilization fix A2.
+3. Finalize PRD/TDD/task docs.
+4. Migration database.
+5. Model/helper baru.
+6. Provider setup.
+7. UI tambahan via Stitch.
+8. Design handoff final.
+9. Implement Wishlist.
+10. Implement Order.
+11. Implement Notes.
+12. Implement Statistics.
+13. Implement CustomPaint.
+14. Regression test.
+15. Final documentation/presentation.
 
-Scope final Assessment 2 adalah:
+---
 
-1. Product Catalog.
-2. Product Detail sederhana.
-3. Product CRUD.
-4. Category CRUD.
-5. Cart Management.
-6. Profile / Settings dengan 6 key SharedPreferences.
+## 24. Pembagian Kerja Tim
 
-Project tidak diarahkan menjadi full e-commerce online pada Assessment 2. Fokus utama adalah memastikan implementasi SQLite dan SharedPreferences berjalan dengan jelas, stabil, dan dapat didemokan oleh seluruh anggota kelompok.
+| Anggota | Fokus | CRUD | SharedPreferences | Custom Widget | File/screen |
+|---|---|---|---|---|---|
+| Anggota 1 | Product, Category, Catalog, Wishlist | Category, Product, Wishlist | `last_selected_category_id`, `product_sort_type` | `ProductCard`, `CategoryChip`, `WishlistToggleButton` | Home, Detail, Manage Product, Manage Category, Wishlist |
+| Anggota 2 | Cart, Order Simulation, Chart | Cart, Order | `preferred_view_mode`, `cart_last_opened` | `CartItemTile`, `QuantityControl`, `OrderStatusStepper`, `StatCard` | Cart, Orders, Order Detail, Statistics |
+| Anggota 3 | Settings, SharedPreferences, Review/Note, UI consistency | Product Note | `user_name`, `is_dark_mode` | `PreferenceSelect`, `SettingTile`, `NoteCard` | Settings, Notes, shared widgets |
+
+---
+
+## 25. Final Scope Statement
+
+**Laviade Studio Mobile — Local Commerce Simulation** adalah aplikasi Flutter mobile local-first yang melanjutkan baseline Assessment 2 **Laviade Studio Mobile — Local Catalog & Cart**. Project final mempertahankan katalog produk, detail produk, cart lokal, product/category/cart CRUD, SQLite, SharedPreferences, bottom navigation, dan reusable UI dari Assessment 2. Untuk memenuhi Tugas Besar, aplikasi diperluas dengan wishlist lokal, order simulation lokal, product note/review lokal, chart/statistik lokal, Provider sederhana, custom widget per anggota, dan CustomPaint `OrderStatusStepper`.
+
+Project tetap simulasi lokal akademik, tidak menggunakan Maps, tidak memakai backend/API production, tidak memakai payment gateway real, dan tidak menjadi marketplace production.

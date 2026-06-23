@@ -9,6 +9,7 @@ import '../../models/product_model.dart';
 import '../../widgets/category_chip.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/empty_state.dart';
+import '../../widgets/error_state.dart';
 import '../../widgets/product_card.dart';
 import '../../widgets/product_list_tile.dart';
 import 'product_detail_screen.dart';
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ProductModel> _products = [];
   bool _loadingCategories = true;
   bool _loadingProducts = true;
+  String? _loadError;
 
   @override
   void initState() {
@@ -71,6 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadData() async {
+    setState(() {
+      _loadingCategories = true;
+      _loadingProducts = true;
+      _loadError = null;
+    });
+
     await _loadCategories();
     await _loadProducts();
   }
@@ -83,7 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _loadingCategories = false;
       });
     } catch (e) {
-      setState(() => _loadingCategories = false);
+      setState(() {
+        _loadingCategories = false;
+        _loadError = 'Data produk gagal dimuat.';
+      });
     }
   }
 
@@ -95,7 +106,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _loadingProducts = false;
       });
     } catch (e) {
-      setState(() => _loadingProducts = false);
+      setState(() {
+        _loadingProducts = false;
+        _loadError = 'Data produk gagal dimuat.';
+      });
     }
   }
 
@@ -126,6 +140,39 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _mapDisplayToSortType(String display) {
+    switch (display) {
+      case 'Harga terendah':
+        return 'price_asc';
+      case 'Harga tertinggi':
+        return 'price_desc';
+      default:
+        return 'default';
+    }
+  }
+
+  Future<void> _changeSortType(String? value) async {
+    final displayValue = value ?? 'Default';
+    setState(() => _sortType = displayValue);
+
+    try {
+      await _prefs.saveProductSortType(_mapDisplayToSortType(displayValue));
+    } catch (e) {
+      // Preference save failure should not block catalog usage.
+    }
+  }
+
+  Future<void> _toggleViewMode() async {
+    final newIsGrid = !_isGrid;
+    setState(() => _isGrid = newIsGrid);
+
+    try {
+      await _prefs.savePreferredViewMode(newIsGrid ? 'grid' : 'list');
+    } catch (e) {
+      // Preference save failure should not block catalog usage.
+    }
+  }
+
   void _openDetail(ProductModel product) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -141,6 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (_loadingProducts || _loadingCategories) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_loadError != null) {
+      return ErrorState(title: _loadError!, onAction: _loadData);
     }
 
     final products = _visibleProducts;
@@ -191,14 +242,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 items: const ['Default', 'Harga terendah', 'Harga tertinggi'],
                 value: _sortType,
                 itemLabelBuilder: (item) => item,
-                onChanged: (value) =>
-                    setState(() => _sortType = value ?? 'Default'),
+                onChanged: _changeSortType,
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             IconButton.filledTonal(
               tooltip: _isGrid ? 'Tampilan grid' : 'Tampilan list',
-              onPressed: () => setState(() => _isGrid = !_isGrid),
+              onPressed: _toggleViewMode,
               icon: Icon(_isGrid ? Icons.grid_view : Icons.view_list),
             ),
           ],

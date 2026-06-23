@@ -63,13 +63,20 @@ class PreferenceHelper {
   }
 
   // ========== PRODUCT SORT TYPE ==========
-  // Valid values: 'default', 'name_asc', 'name_desc', 'price_asc', 'price_desc', 'newest', 'oldest'
+  // Valid values: 'default', 'price_asc', 'price_desc'
   Future<void> saveProductSortType(String sortType) async {
+    if (sortType != 'default' && sortType != 'price_asc' && sortType != 'price_desc') {
+      sortType = defaultProductSortType;
+    }
     await prefs.setString(keyProductSortType, sortType);
   }
 
   String getProductSortType() {
-    return prefs.getString(keyProductSortType) ?? defaultProductSortType;
+    final sortType = prefs.getString(keyProductSortType) ?? defaultProductSortType;
+    if (sortType != 'default' && sortType != 'price_asc' && sortType != 'price_desc') {
+      return defaultProductSortType;
+    }
+    return sortType;
   }
 
   // ========== PREFERRED VIEW MODE ==========

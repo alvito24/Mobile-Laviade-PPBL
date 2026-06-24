@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               SizedBox(height: AppSpacing.md),
               Text(
-                'Local Catalog & Cart',
+                'Local Commerce Simulation',
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 14,
@@ -68,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               Spacer(),
               Text(
-                'SQLite • SharedPreferences • Assessment 2',
+                'Local-first • SQLite • SharedPreferences',
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12,

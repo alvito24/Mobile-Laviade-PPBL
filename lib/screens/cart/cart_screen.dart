@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/app_spacing.dart';
 import '../../data/database/database_helper.dart';
 import '../../data/preferences/preference_helper.dart';
 import '../../models/cart_item_model.dart';
+import '../../providers/order_provider.dart';
 import '../../widgets/cart_item_tile.dart';
 import '../../widgets/cart_summary.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
@@ -11,6 +13,7 @@ import '../../widgets/empty_state.dart';
 import '../../widgets/error_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/section_title.dart';
+import '../orders/order_list_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key, this.onContinueBrowsing});
@@ -162,6 +165,37 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+  Future<void> _createLocalOrderSimulation() async {
+    if (_cartItems.isEmpty || _updating) return;
+
+    setState(() => _updating = true);
+    try {
+      await context.read<OrderProvider>().createOrderFromCart(
+            note: 'Dibuat dari cart lokal. Tidak ada pembayaran real.',
+          );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text('Simulasi Order Lokal berhasil dibuat.')),
+        );
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const OrderListScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text('Gagal membuat Simulasi Order Lokal: $e')),
+        );
+    } finally {
+      if (mounted) {
+        setState(() => _updating = false);
+      }
+    }
+  }
+
   int _calculateTotal() {
     return _cartItems.fold(0, (sum, item) => sum + item.getSubtotal());
   }
@@ -211,6 +245,17 @@ class _CartScreenState extends State<CartScreen> {
         if (_cartItems.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           CartSummary(total: total),
+          const SizedBox(height: AppSpacing.md),
+          PrimaryButton(
+            label: _updating ? 'Membuat Simulasi...' : 'Buat Simulasi Order Lokal',
+            icon: Icons.receipt_long_outlined,
+            onPressed: _updating ? null : _createLocalOrderSimulation,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const Text(
+            'Data tersimpan di perangkat. Tidak ada pembayaran real.',
+            textAlign: TextAlign.center,
+          ),
         ],
         const SizedBox(height: AppSpacing.lg),
         PrimaryButton(

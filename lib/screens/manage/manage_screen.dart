@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../widgets/manage_menu_card.dart';
 import '../../widgets/section_title.dart';
+import '../orders/order_list_screen.dart';
+import '../statistics/insight_statistics_screen.dart';
+import '../wishlist/wishlist_screen.dart';
 import 'manage_category_screen.dart';
 import 'manage_product_screen.dart';
 
@@ -16,7 +19,7 @@ class ManageScreen extends StatelessWidget {
       children: [
         const SectionTitle(
           title: 'Manage Data',
-          subtitle: 'Kelola data lokal untuk demo SQLite.',
+          subtitle: 'Hub data lokal untuk katalog dan demo CRUD SQLite.',
         ),
         const SizedBox(height: AppSpacing.lg),
         ManageMenuCard(
@@ -37,6 +40,35 @@ class ManageScreen extends StatelessWidget {
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => const ManageCategoryScreen(),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ManageMenuCard(
+          title: 'Wishlist Lokal',
+          description: 'Lihat dan hapus produk favorit yang tersimpan di SQLite.',
+          icon: Icons.favorite_border,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const WishlistScreen()),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ManageMenuCard(
+          title: 'Simulasi Order Lokal',
+          description: 'Pantau riwayat order simulasi tanpa pembayaran real.',
+          icon: Icons.receipt_long_outlined,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const OrderListScreen()),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ManageMenuCard(
+          title: 'Insight Lokal',
+          description: 'Lihat statistik SQLite lokal tanpa analytics online.',
+          icon: Icons.bar_chart_outlined,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const InsightStatisticsScreen(),
             ),
           ),
         ),

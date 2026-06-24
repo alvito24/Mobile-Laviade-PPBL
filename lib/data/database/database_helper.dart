@@ -3,6 +3,10 @@ import 'package:path/path.dart';
 import '../../models/category_model.dart';
 import '../../models/product_model.dart';
 import '../../models/cart_item_model.dart';
+import '../../models/wishlist_item_model.dart';
+import '../../models/order_simulation_model.dart';
+import '../../models/order_item_model.dart';
+import '../../models/product_note_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -22,8 +26,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
   }
 
@@ -60,6 +65,65 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         product_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products (id)
+      )
+    ''');
+
+    await _createTugasBesarTables(db);
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createTugasBesarTables(db);
+    }
+  }
+
+  Future<void> _createTugasBesarTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS wishlist_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        UNIQUE(product_id),
+        FOREIGN KEY (product_id) REFERENCES products (id)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_code TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        status TEXT NOT NULL,
+        total_amount REAL NOT NULL,
+        total_items INTEGER NOT NULL,
+        note TEXT,
+        UNIQUE(order_code)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS order_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        product_name_snapshot TEXT NOT NULL,
+        product_price_snapshot REAL NOT NULL,
+        quantity INTEGER NOT NULL,
+        subtotal REAL NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES orders (id),
+        FOREIGN KEY (product_id) REFERENCES products (id)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS product_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id INTEGER NOT NULL,
+        title TEXT,
+        note TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (product_id) REFERENCES products (id)
@@ -318,6 +382,293 @@ class DatabaseHelper {
       total += item.getSubtotal();
     }
     return total;
+  }
+
+  // ========== WISHLIST ITEM CRUD ==========
+
+  Future<int> addWishlistItem(int productId) async {
+    final db = await database;
+    final product = await getProductById(productId);
+    if (product == null) {
+      throw Exception('Produk tidak ditemukan.');
+    }
+
+    final item = WishlistItemModel(productId: productId);
+    return await db.insert(
+      'wishlist_items',
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<int> removeWishlistItem(int productId) async {
+    final db = await database;
+    return await db.delete(
+      'wishlist_items',
+      where: 'product_id = ?',
+      whereArgs: [productId],
+    );
+  }
+
+  Future<bool> isProductWishlisted(int productId) async {
+    final db = await database;
+    final result = await db.query(
+      'wishlist_items',
+      where: 'product_id = ?',
+      whereArgs: [productId],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
+
+  Future<List<Map<String, dynamic>>> getWishlistProducts() async {
+    final db = await database;
+    return await db.rawQuery('''
+      SELECT
+        w.id as wishlist_id,
+        w.product_id,
+        w.created_at as wishlist_created_at,
+        p.name as product_name,
+        p.price as product_price,
+        p.stock as product_stock,
+        p.image_name as product_image_name,
+        c.name as category_name
+      FROM wishlist_items w
+      LEFT JOIN products p ON w.product_id = p.id
+      LEFT JOIN categories c ON p.category_id = c.id
+      ORDER BY w.created_at DESC
+    ''');
+  }
+
+  Future<int> clearWishlist() async {
+    final db = await database;
+    return await db.delete('wishlist_items');
+  }
+
+  // ========== ORDER SIMULATION CRUD ==========
+
+  Future<int> createOrderSimulationFromCart({String? note}) async {
+    final db = await database;
+    final cartItems = await getCartItems();
+    if (cartItems.isEmpty) {
+      throw Exception('Cart masih kosong.');
+    }
+
+    return await db.transaction<int>((txn) async {
+      final now = DateTime.now();
+      final createdAt = now.toIso8601String();
+      final orderCode = _generateOrderCode(now);
+      final totalAmount = cartItems.fold<double>(
+        0,
+        (sum, item) => sum + item.getSubtotal(),
+      );
+      final totalItems = cartItems.fold<int>(
+        0,
+        (sum, item) => sum + item.quantity,
+      );
+
+      final orderId = await txn.insert(
+        'orders',
+        OrderSimulationModel(
+          orderCode: orderCode,
+          createdAt: createdAt,
+          status: 'dibuat',
+          totalAmount: totalAmount,
+          totalItems: totalItems,
+          note: note,
+        ).toMap(),
+      );
+
+      for (final item in cartItems) {
+        final price = (item.productPrice ?? 0).toDouble();
+        await txn.insert(
+          'order_items',
+          OrderItemModel(
+            orderId: orderId,
+            productId: item.productId,
+            productNameSnapshot: item.productName ?? 'Unknown Product',
+            productPriceSnapshot: price,
+            quantity: item.quantity,
+            subtotal: price * item.quantity,
+          ).toMap(),
+        );
+      }
+
+      return orderId;
+    });
+  }
+
+  Future<List<OrderSimulationModel>> getOrders() async {
+    final db = await database;
+    final result = await db.query('orders', orderBy: 'created_at DESC');
+    return result.map((map) => OrderSimulationModel.fromMap(map)).toList();
+  }
+
+  Future<OrderSimulationModel?> getOrderById(int orderId) async {
+    final db = await database;
+    final result = await db.query(
+      'orders',
+      where: 'id = ?',
+      whereArgs: [orderId],
+      limit: 1,
+    );
+    if (result.isEmpty) return null;
+    return OrderSimulationModel.fromMap(result.first);
+  }
+
+  Future<List<OrderItemModel>> getOrderItems(int orderId) async {
+    final db = await database;
+    final result = await db.query(
+      'order_items',
+      where: 'order_id = ?',
+      whereArgs: [orderId],
+      orderBy: 'id ASC',
+    );
+    return result.map((map) => OrderItemModel.fromMap(map)).toList();
+  }
+
+  Future<int> updateOrderStatus(int orderId, String status) async {
+    final db = await database;
+    const allowedStatuses = {'dibuat', 'diproses', 'selesai', 'dibatalkan'};
+    if (!allowedStatuses.contains(status)) {
+      throw Exception('Status simulasi order tidak valid.');
+    }
+    return await db.update(
+      'orders',
+      {'status': status},
+      where: 'id = ?',
+      whereArgs: [orderId],
+    );
+  }
+
+  Future<int> deleteOrder(int orderId) async {
+    final db = await database;
+    return await db.transaction<int>((txn) async {
+      await txn.delete(
+        'order_items',
+        where: 'order_id = ?',
+        whereArgs: [orderId],
+      );
+      return await txn.delete('orders', where: 'id = ?', whereArgs: [orderId]);
+    });
+  }
+
+  // ========== PRODUCT NOTE CRUD ==========
+
+  Future<int> addProductNote(ProductNoteModel note) async {
+    final db = await database;
+    if (note.note.trim().isEmpty) {
+      throw Exception('Catatan produk tidak boleh kosong.');
+    }
+    final product = await getProductById(note.productId);
+    if (product == null) {
+      throw Exception('Produk tidak ditemukan.');
+    }
+    return await db.insert('product_notes', note.toMap());
+  }
+
+  Future<List<ProductNoteModel>> getProductNotesByProductId(int productId) async {
+    final db = await database;
+    final result = await db.query(
+      'product_notes',
+      where: 'product_id = ?',
+      whereArgs: [productId],
+      orderBy: 'updated_at DESC',
+    );
+    return result.map((map) => ProductNoteModel.fromMap(map)).toList();
+  }
+
+  Future<int> updateProductNote(ProductNoteModel note) async {
+    final db = await database;
+    if (note.id == null) {
+      throw Exception('ID catatan produk wajib ada untuk update.');
+    }
+    if (note.note.trim().isEmpty) {
+      throw Exception('Catatan produk tidak boleh kosong.');
+    }
+    return await db.update(
+      'product_notes',
+      note.copyWith(updatedAt: DateTime.now().toIso8601String()).toMap(),
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
+  }
+
+  Future<int> deleteProductNote(int noteId) async {
+    final db = await database;
+    return await db.delete('product_notes', where: 'id = ?', whereArgs: [noteId]);
+  }
+
+  Future<int> deleteProductNotesByProductId(int productId) async {
+    final db = await database;
+    return await db.delete(
+      'product_notes',
+      where: 'product_id = ?',
+      whereArgs: [productId],
+    );
+  }
+
+  // ========== LOCAL STATISTICS ==========
+
+  Future<Map<String, int>> getLocalCountSummary() async {
+    final db = await database;
+    return {
+      'products': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM products'),
+          ) ??
+          0,
+      'categories': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM categories'),
+          ) ??
+          0,
+      'cart_items': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM cart_items'),
+          ) ??
+          0,
+      'wishlist_items': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM wishlist_items'),
+          ) ??
+          0,
+      'orders': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM orders'),
+          ) ??
+          0,
+      'product_notes': Sqflite.firstIntValue(
+            await db.rawQuery('SELECT COUNT(*) FROM product_notes'),
+          ) ??
+          0,
+    };
+  }
+
+  Future<double> getTotalOrderAmount() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT SUM(total_amount) FROM orders');
+    final value = result.first.values.first;
+    return value == null ? 0 : (value as num).toDouble();
+  }
+
+  Future<double> getCartEstimatedTotal() async {
+    return (await getCartTotal()).toDouble();
+  }
+
+  Future<List<Map<String, dynamic>>> getOrderStatusDistribution() async {
+    final db = await database;
+    return await db.rawQuery('''
+      SELECT status, COUNT(*) as count
+      FROM orders
+      GROUP BY status
+      ORDER BY status ASC
+    ''');
+  }
+
+  String _generateOrderCode(DateTime dateTime) {
+    String twoDigits(int value) => value.toString().padLeft(2, '0');
+    return 'LVD-${dateTime.year}'
+        '${twoDigits(dateTime.month)}'
+        '${twoDigits(dateTime.day)}-'
+        '${twoDigits(dateTime.hour)}'
+        '${twoDigits(dateTime.minute)}'
+        '${twoDigits(dateTime.second)}';
   }
 
   // ========== UTILITY ==========

@@ -5,6 +5,7 @@ import '../../data/database/database_helper.dart';
 import '../../models/product_model.dart';
 import '../../widgets/delete_confirmation_dialog.dart';
 import '../../widgets/empty_state.dart';
+import '../../widgets/error_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/product_manage_tile.dart';
 import 'product_form_screen.dart';
@@ -74,30 +75,9 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Data produk gagal dimuat.',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(fontSize: 14),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => setState(() {}),
-                        child: const Text('Coba Lagi'),
-                      ),
-                    ],
-                  ),
-                ),
+              return ErrorState(
+                title: 'Data produk gagal dimuat.',
+                onAction: () => setState(() {}),
               );
             }
 

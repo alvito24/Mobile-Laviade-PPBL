@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_radius.dart';
@@ -6,9 +7,13 @@ import '../../core/constants/app_spacing.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../data/database/database_helper.dart';
 import '../../models/product_model.dart';
+import '../../providers/wishlist_provider.dart';
 import '../../widgets/category_chip.dart';
+import '../../widgets/empty_state.dart';
+import '../../widgets/error_state.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/stock_badge.dart';
+import '../notes/product_note_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.productId});
@@ -53,6 +58,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  Future<void> _toggleWishlist(ProductModel product) async {
+    try {
+      await context.read<WishlistProvider>().toggleWishlist(product.id!);
+      if (!mounted) return;
+      final isWishlisted = context
+          .read<WishlistProvider>()
+          .wishlistedProductIds
+          .contains(product.id);
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              isWishlisted
+                  ? 'Produk disimpan ke wishlist lokal.'
+                  : 'Produk dihapus dari wishlist lokal.',
+            ),
+          ),
+        );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text('Wishlist gagal diperbarui: $e')));
+    }
+  }
+
+  void _openProductNotes(ProductModel product) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ProductNoteScreen(
+          productId: product.id!,
+          productName: product.name,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,60 +109,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Detail produk gagal dimuat.',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(fontSize: 14),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => setState(() {}),
-                        child: const Text('Coba Lagi'),
-                      ),
-                    ],
-                  ),
-                ),
+              return ErrorState(
+                title: 'Detail produk gagal dimuat.',
+                onAction: () => setState(() {}),
               );
             }
 
             final product = snapshot.data;
             if (product == null) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Produk tidak ditemukan.',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      const Text(
-                        'Produk mungkin sudah dihapus dari database lokal.',
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Kembali ke Katalog'),
-                      ),
-                    ],
-                  ),
-                ),
+              return EmptyState(
+                title: 'Produk tidak ditemukan.',
+                description: 'Produk mungkin sudah dihapus dari database lokal.',
+                actionLabel: 'Kembali ke Katalog',
+                onAction: () => Navigator.of(context).pop(),
               );
             }
+
+            context.read<WishlistProvider>().isWishlisted(product.id!);
 
             return ListView(
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -171,7 +177,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
+                Consumer<WishlistProvider>(
+                  builder: (context, provider, _) {
+                    final isWishlisted = provider.wishlistedProductIds.contains(product.id);
+                    return OutlinedButton.icon(
+                      onPressed: () => _toggleWishlist(product),
+                      icon: Icon(
+                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                      ),
+                      label: Text(
+                        isWishlisted ? 'Tersimpan di Wishlist' : 'Simpan ke Wishlist',
+                      ),
+                    );
+                  },
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _openProductNotes(product),
+                  icon: const Icon(Icons.note_alt_outlined),
+                  label: const Text('Catatan Produk'),
+                ),
+                const SizedBox(height: AppSpacing.md),
                 PrimaryButton(
                   label: _isAddingToCart ? 'Menambahkan...' : 'Tambah ke Cart',
                   icon: Icons.shopping_bag_outlined,
